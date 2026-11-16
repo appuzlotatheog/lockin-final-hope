@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Lockin — study OS
+Comment=Local-first study and exam OS
+Exec=lockin-final-hope
+Icon=applications-education
+Terminal=false
+Categories=Education;
+StartupNotify=true

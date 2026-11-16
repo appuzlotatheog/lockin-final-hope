@@ -57,6 +57,10 @@ selections.
 
 ## Installation
 
+See [docs/INSTALL.md](docs/INSTALL.md) for the full guide, including Windows
+notes, uninstall steps and data locations. A user-level Linux installer is in
+`packaging/install-linux.sh`.
+
 ### Linux
 
 Download the latest release asset `lockin-final-hope-linux-x86_64` from GitHub
