@@ -1,0 +1,519 @@
+// Reusable, keyboard-accessible UI primitives.
+
+import { Palette, Metrics } from "theme.slint";
+import { AgendaItem } from "models.slint";
+import { ComboBox, TextEdit } from "std-widgets.slint";
+
+export component AppButton inherits FocusScope {
+    in property <string> text;
+    // 0 primary, 1 secondary, 2 ghost, 3 danger, 4 success
+    in property <int> kind: 0;
+    in property <length> button-width: 108px;
+    in property <length> button-height: 36px;
+    in property <bool> stretch: false;
+    callback clicked();
+
+    width: button-width;
+    height: button-height;
+    horizontal-stretch: stretch ? 1 : 0;
+    accessible-role: button;
+    accessible-label: text;
+    accessible-enabled: root.enabled;
+
+    pure function base-color(k: int) -> color {
+        if (k == 0) { return Palette.accent; }
+        if (k == 3) { return #3a2029; }
+        if (k == 4) { return #1d3a30; }
+        if (k == 2) { return transparent; }
+        return Palette.elevated;
+    }
+    pure function border-color(k: int) -> color {
+        if (k == 1) { return Palette.border; }
+        if (k == 3) { return #7a3648; }
+        if (k == 4) { return #2e6b56; }
+        if (k == 2) { return transparent; }
+        return transparent;
+    }
+    pure function label-color(k: int) -> color {
+        if (k == 0) { return #130f1d; }
+        if (k == 2) { return Palette.muted; }
+        if (k == 3) { return Palette.danger; }
+        if (k == 4) { return Palette.success; }
+        return Palette.text;
+    }
+
+    bg := Rectangle {
+        border-radius: Metrics.radius-sm;
+        border-width: (kind == 1 || kind == 3 || kind == 4 || root.has-focus) ? 1px : 0px;
+        border-color: root.has-focus ? Palette.accent : border-color(root.kind);
+        background: root.enabled ? (touch.has-hover ? base-color(root.kind).mix(Palette.text, 0.09) : base-color(root.kind)) : base-color(root.kind).transparentize(0.55);
+    }
+    label := Text {
+        text: root.text;
+        color: label-color(root.kind);
+        opacity: root.enabled ? 1 : 0.5;
+        font-size: 13px;
+        font-weight: 600;
+        horizontal-alignment: center;
+        vertical-alignment: center;
+    }
+    touch := TouchArea {
+        enabled: root.enabled;
+        mouse-cursor: pointer;
+        clicked => { root.clicked(); }
+    }
+    key-pressed(event) => {
+        if (event.text == " " || event.text == "\n") {
+            root.clicked();
+            return accept;
+        }
+        return reject;
+    }
+}
+
+export component NavButton inherits FocusScope {
+    in property <string> label;
+    in property <bool> active: false;
+    in property <int> badge: 0;
+    callback clicked();
+    height: 38px;
+    accessible-role: button;
+    accessible-label: label;
+
+    Rectangle {
+        border-radius: Metrics.radius-sm;
+        background: root.active ? Palette.accent-soft : (touch.has-hover ? #ffffff08 : transparent);
+    }
+    Rectangle {
+        x: 0; y: 8px; width: 3px; height: parent.height - 16px;
+        border-radius: 2px;
+        background: root.active ? Palette.accent : transparent;
+    }
+    Text {
+        x: 16px; y: 0; width: parent.width - 48px; height: parent.height;
+        text: root.label;
+        color: root.active ? Palette.text : Palette.muted;
+        font-size: 13px;
+        font-weight: root.active ? 600 : 400;
+        vertical-alignment: center;
+    }
+    if root.badge > 0: Rectangle {
+        x: parent.width - 32px; y: (parent.height - 18px) / 2; width: 18px; height: 18px;
+        border-radius: 9px;
+        background: Palette.accent;
+        Text {
+            text: root.badge > 99 ? "99+" : root.badge;
+            color: #130f1d; font-size: 10px; font-weight: 700;
+            horizontal-alignment: center; vertical-alignment: center;
+        }
+    }
+    touch := TouchArea { mouse-cursor: pointer; clicked => { root.clicked(); } }
+    key-pressed(event) => {
+        if (event.text == " " || event.text == "\n") { root.clicked(); return accept; }
+        return reject;
+    }
+}
+
+export component AgendaRow inherits Rectangle {
+    in property <AgendaItem> item;
+    in property <bool> compact: false;
+    in property <bool> overdue: false;
+    callback start();
+    callback complete();
+    callback reopen();
+    callback skip();
+    callback move();
+    callback edit();
+
+    height: compact ? 44px : 60px;
+    background: touch.has-hover ? #ffffff06 : transparent;
+    border-radius: Metrics.radius-sm;
+
+    touch := TouchArea {
+        mouse-cursor: pointer;
+        clicked => { root.edit(); }
+    }
+    Rectangle {
+        x: 0; y: 8px; width: 3px; height: parent.height - 16px;
+        border-radius: 2px;
+        background: root.item.tint;
+    }
+    Text {
+        x: 12px; y: 0; width: 60px; height: parent.height;
+        text: root.item.start;
+        color: root.item.is-break ? Palette.muted : Palette.text;
+        font-size: root.compact ? 10.5px : 11.5px;
+        font-weight: 600;
+        font-family: Palette.mono;
+        vertical-alignment: center;
+    }
+    VerticalLayout {
+        x: 76px; y: 0; width: parent.width - (root.compact ? 86px : 236px); height: parent.height;
+        spacing: 1px;
+        alignment: center;
+        Text {
+            text: root.item.title;
+            color: root.item.status-index == 4 ? Palette.muted : Palette.text;
+            font-size: root.compact ? 11px : 12.5px;
+            font-weight: 600;
+            overflow: elide;
+        }
+        if !root.compact || root.item.subject != "": Text {
+            text: root.item.subject + (root.item.kind != "" ? "  ·  " + root.item.kind : "") + (root.overdue ? "  ·  overdue" : "");
+            color: root.overdue ? Palette.danger : Palette.muted;
+            font-size: 10px;
+            overflow: elide;
+        }
+    }
+    if root.compact: Text {
+        x: parent.width - 64px; y: 0; width: 56px; height: parent.height;
+        text: root.item.minutes + "m";
+        color: Palette.muted; font-size: 9.5px;
+        horizontal-alignment: right; vertical-alignment: center;
+    }
+    if !root.compact: HorizontalLayout {
+        x: parent.width - 232px; y: 0; width: 224px; height: parent.height;
+        spacing: 6px;
+        alignment: end;
+        Text {
+            text: root.item.status;
+            color: root.item.status-index == 2 ? Palette.success : root.item.status-index == 3 ? Palette.warning : root.item.status-index == 4 ? Palette.danger : Palette.accent;
+            font-size: 10px;
+            font-weight: 600;
+            vertical-alignment: center;
+            visible: root.item.status-index != 0;
+        }
+        if !root.item.is-fixed && !root.item.is-break && root.item.status-index != 2: AppButton {
+            text: root.item.kind == "Revision" ? "Review" : "Focus";
+            kind: 1; button-width: 62px; button-height: 28px;
+            clicked => { root.start(); }
+        }
+        if !root.item.is-fixed && !root.item.is-break: AppButton {
+            text: root.item.status-index == 2 ? "Undo" : "Done";
+            kind: root.item.status-index == 2 ? 2 : 4;
+            button-width: 54px; button-height: 28px;
+            clicked => { if (root.item.status-index == 2) { root.reopen(); } else { root.complete(); } }
+        }
+        if root.overdue && root.item.status-index != 2: AppButton {
+            text: "Move"; kind: 2; button-width: 48px; button-height: 28px;
+            clicked => { root.move(); }
+        }
+    }
+}
+
+export component Card inherits Rectangle {
+    border-radius: Metrics.radius;
+    background: Palette.surface;
+    border-width: 1px;
+    border-color: Palette.border;
+}
+
+export component Divider inherits Rectangle {
+    height: 1px;
+    background: Palette.border;
+}
+
+export component Dot inherits Rectangle {
+    in property <color> dot-color: Palette.accent;
+    width: 8px; height: 8px; border-radius: 4px;
+    background: dot-color;
+}
+
+export component Pill inherits Rectangle {
+    in property <string> text;
+    // 0 muted, 1 accent, 2 success, 3 warning, 4 danger, 5 neutral
+    in property <int> tone: 0;
+    height: 21px;
+    width: label.preferred-width + 18px;
+    border-radius: 10px;
+    border-width: 1px;
+    background: tone-bg(root.tone);
+    border-color: tone-border(root.tone);
+
+    pure function tone-bg(t: int) -> color {
+        if (t == 1) { return Palette.accent-soft; }
+        if (t == 2) { return Palette.success-soft; }
+        if (t == 3) { return Palette.warning-soft; }
+        if (t == 4) { return Palette.danger-soft; }
+        if (t == 5) { return #ffffff08; }
+        return #ffffff05;
+    }
+    pure function tone-fg(t: int) -> color {
+        if (t == 1) { return Palette.accent; }
+        if (t == 2) { return Palette.success; }
+        if (t == 3) { return Palette.warning; }
+        if (t == 4) { return Palette.danger; }
+        if (t == 5) { return Palette.text; }
+        return Palette.muted;
+    }
+    pure function tone-border(t: int) -> color {
+        if (t == 0 || t == 5) { return Palette.border; }
+        return tone-fg(t).transparentize(0.7);
+    }
+    label := Text {
+        text: root.text;
+        color: tone-fg(root.tone);
+        font-size: 10.5px;
+        font-weight: 600;
+        horizontal-alignment: center;
+        vertical-alignment: center;
+        x: 0; y: 0; width: parent.width; height: parent.height;
+    }
+}
+
+export component ProgressBar inherits Rectangle {
+    in property <float> value: 0;
+    in property <color> bar-color: Palette.accent;
+    in property <length> bar-height: 6px;
+    height: bar-height;
+    border-radius: bar-height / 2;
+    background: #2a2438;
+    Rectangle {
+        width: min(100, max(0, root.value)) * parent.width / 100;
+        height: parent.height;
+        border-radius: parent.height / 2;
+        background: root.bar-color;
+    }
+}
+
+export component Field inherits VerticalLayout {
+    in property <string> label;
+    in-out property <string> text;
+    in property <string> placeholder;
+    in property <bool> editable: true;
+    in property <InputType> input-type: InputType.text;
+    in property <string> hint;
+    spacing: 6px;
+
+    if label != "": Text {
+        text: root.label;
+        color: Palette.muted;
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.4px;
+    }
+    Rectangle {
+        height: 36px;
+        border-radius: Metrics.radius-sm;
+        background: Palette.elevated;
+        border-width: 1px;
+        border-color: input.has-focus ? Palette.accent : Palette.border;
+        input := TextInput {
+            x: 10px; y: 0; width: parent.width - 20px; height: parent.height;
+            text <=> root.text;
+            enabled: root.editable;
+            input-type: root.input-type;
+            color: Palette.text;
+            font-size: 13px;
+            font-family: Palette.sans;
+            vertical-alignment: center;
+            selection-background-color: Palette.accent;
+            selection-foreground-color: #130f1d;
+        }
+    }
+    if hint != "": Text {
+        text: root.hint;
+        color: Palette.muted;
+        font-size: 10.5px;
+        wrap: word-wrap;
+    }
+}
+
+export component TextArea inherits Rectangle {
+    in-out property <string> text;
+    in property <string> placeholder;
+    in property <length> area-height: 140px;
+    in property <bool> read-only: false;
+    in property <string> family: Palette.mono;
+    height: area-height;
+    border-radius: Metrics.radius-sm;
+    background: Palette.elevated;
+    border-width: 1px;
+    border-color: Palette.border;
+    TextEdit {
+        x: 1px; y: 1px; width: parent.width - 2px; height: parent.height - 2px;
+        text <=> root.text;
+        read-only: root.read-only;
+        wrap: word-wrap;
+        font-size: 12px;
+        font-family: root.family;
+    }
+    if root.text == "" && root.placeholder != "": Text {
+        x: 12px; y: 10px;
+        text: root.placeholder;
+        color: Palette.muted;
+        font-size: 12px;
+        font-family: root.family;
+    }
+}
+
+export component LabeledCombo inherits VerticalLayout {
+    in property <string> label;
+    in property <[string]> model;
+    in-out property <int> current-index: 0;
+    in property <bool> enabled: true;
+    callback selected(int);
+    spacing: 6px;
+    if label != "": Text {
+        text: root.label; color: Palette.muted; font-size: 11px; font-weight: 600;
+    }
+    combo := ComboBox {
+        model: root.model;
+        current-index <=> root.current-index;
+        enabled: root.enabled;
+        selected => { root.selected(root.current-index); }
+    }
+}
+
+export component Toggle inherits FocusScope {
+    in property <string> label;
+    in property <bool> checked: false;
+    in property <string> hint;
+    callback toggled(bool);
+    height: hint == "" ? 26px : 44px;
+    horizontal-stretch: 1;
+    accessible-role: checkbox;
+    accessible-label: label;
+    accessible-checked: checked;
+
+    Rectangle {
+        x: 0; y: (parent.height - (root.hint == "" ? 20px : 24px)) / 2;
+        width: 36px; height: 20px; border-radius: 10px;
+        background: root.checked ? Palette.accent : #2f293d;
+        border-width: 1px;
+        border-color: root.has-focus ? Palette.text : (root.checked ? Palette.accent : Palette.border);
+        Rectangle {
+            x: root.checked ? 18px : 3px;
+            y: 3px; width: 14px; height: 14px; border-radius: 7px;
+            background: root.checked ? #130f1d : Palette.muted;
+            animate x { duration: 120ms; }
+        }
+    }
+    Text {
+        x: 46px; y: 0; width: parent.width - 46px; height: parent.height;
+        text: root.label;
+        color: root.enabled ? Palette.text : Palette.muted;
+        font-size: 12.5px;
+        vertical-alignment: center;
+        wrap: word-wrap;
+    }
+    TouchArea {
+        enabled: root.enabled;
+        mouse-cursor: pointer;
+        clicked => { root.toggled(!root.checked); }
+    }
+    key-pressed(event) => {
+        if (event.text == " " || event.text == "\n") { root.toggled(!root.checked); return accept; }
+        return reject;
+    }
+}
+
+export component StatTile inherits Card {
+    in property <string> label;
+    in property <string> value;
+    in property <string> sub;
+    in property <int> tone: 0;
+    min-height: 90px;
+    VerticalLayout {
+        padding: 15px;
+        spacing: 5px;
+        Text { text: root.label; color: Palette.muted; font-size: 10.5px; font-weight: 600; letter-spacing: 0.5px; }
+        Text {
+            text: root.value;
+            color: root.tone == 1 ? Palette.accent : root.tone == 2 ? Palette.success : root.tone == 3 ? Palette.warning : root.tone == 4 ? Palette.danger : Palette.text;
+            font-size: 24px;
+            font-weight: 700;
+        }
+        Text { text: root.sub; color: Palette.muted; font-size: 10.5px; overflow: elide; }
+    }
+}
+
+export component SectionTitle inherits VerticalLayout {
+    in property <string> title;
+    in property <string> subtitle;
+    spacing: 3px;
+    Text { text: root.title; color: Palette.text; font-size: 15px; font-weight: 650; }
+    if subtitle != "": Text { text: root.subtitle; color: Palette.muted; font-size: 11.5px; }
+}
+
+export component EmptyState inherits VerticalLayout {
+    in property <string> title;
+    in property <string> body;
+    spacing: 6px;
+    alignment: center;
+    Text { text: root.title; color: Palette.text; font-size: 13px; font-weight: 600; horizontal-alignment: center; }
+    Text { text: root.body; color: Palette.muted; font-size: 11.5px; horizontal-alignment: center; wrap: word-wrap; }
+}
+
+export component KeyValueRow inherits HorizontalLayout {
+    in property <string> label;
+    in property <string> value;
+    height: 26px;
+    Text { text: root.label; color: Palette.muted; font-size: 11.5px; vertical-alignment: center; horizontal-stretch: 1; }
+    Text { text: root.value; color: Palette.text; font-size: 11.5px; vertical-alignment: center; horizontal-alignment: right; }
+}
+
+export component Modal inherits Rectangle {
+    in property <bool> open: false;
+    in property <string> title;
+    in property <string> subtitle;
+    in property <length> dialog-width: 560px;
+    in property <length> dialog-height: 440px;
+    callback close();
+    visible: open;
+    width: 100%;
+    height: 100%;
+    background: #050409cc;
+
+    TouchArea { width: 100%; height: 100%; }
+    dialog := Rectangle {
+        width: min(root.dialog-width, parent.width - 40px);
+        height: min(root.dialog-height, parent.height - 40px);
+        x: (parent.width - self.width) / 2;
+        y: (parent.height - self.height) / 2;
+        border-radius: 18px;
+        background: Palette.surface;
+        border-width: 1px;
+        border-color: Palette.border;
+        VerticalLayout {
+            padding: 22px;
+            spacing: 14px;
+            HorizontalLayout {
+                spacing: 8px;
+                VerticalLayout {
+                    spacing: 2px;
+                    horizontal-stretch: 1;
+                    Text { text: root.title; color: Palette.text; font-size: 17px; font-weight: 700; }
+                    if root.subtitle != "": Text { text: root.subtitle; color: Palette.muted; font-size: 11.5px; wrap: word-wrap; }
+                }
+                AppButton {
+                    text: "Close"; kind: 2; button-width: 62px; button-height: 30px;
+                    clicked => { root.close(); }
+                }
+            }
+            Divider { }
+            @children
+        }
+    }
+}
+
+export component ToastBox inherits Rectangle {
+    in property <string> text;
+    in property <int> tone: 1;
+    in property <bool> open: false;
+    visible: open;
+    width: min(420px, max(200px, toast-text.preferred-width + 40px));
+    height: max(44px, toast-text.preferred-height + 20px);
+    border-radius: 11px;
+    background: Palette.elevated;
+    border-width: 1px;
+    border-color: root.tone == 2 ? Palette.danger : root.tone == 1 ? Palette.success : Palette.border;
+    toast-text := Text {
+        x: 14px; y: 8px; width: parent.width - 28px; height: parent.height - 16px;
+        text: root.text;
+        color: Palette.text;
+        font-size: 12px;
+        vertical-alignment: center;
+        wrap: word-wrap;
+    }
+}

@@ -1,0 +1,230 @@
+// First-run/new-plan wizard. Rendered above the whole window.
+
+import { Palette, Metrics } from "../theme.slint";
+import {
+    AppButton, Divider, Pill, SectionTitle, Field, LabeledCombo, Toggle
+} from "../components.slint";
+import { WizardData } from "../state.slint";
+import { ScrollView } from "std-widgets.slint";
+
+export component WizardOverlay inherits Rectangle {
+    in property <bool> open: WizardData.open;
+    visible: open;
+    width: 100%;
+    height: 100%;
+    background: #050409dd;
+
+    Rectangle {
+        width: min(900px, parent.width - 48px);
+        height: min(690px, parent.height - 48px);
+        x: (parent.width - self.width) / 2;
+        y: (parent.height - self.height) / 2;
+        border-radius: 18px;
+        background: Palette.surface;
+        border-width: 1px;
+        border-color: Palette.border;
+
+        VerticalLayout {
+            padding: 22px;
+            spacing: 12px;
+
+            HorizontalLayout {
+                spacing: 8px;
+                VerticalLayout {
+                    horizontal-stretch: 1;
+                    spacing: 2px;
+                    Text { text: "Create a plan"; color: Palette.text; font-size: 19px; font-weight: 750; }
+                    Text { text: "Offline. No account. Everything stays in your local database."; color: Palette.muted; font-size: 11px; }
+                }
+                AppButton { text: "Close"; kind: 2; button-width: 62px; button-height: 30px; clicked => { WizardData.close-wizard(); } }
+            }
+
+            HorizontalLayout {
+                spacing: 5px;
+                for step[i] in WizardData.step-names: Rectangle {
+                    height: 28px;
+                    horizontal-stretch: 1;
+                    border-radius: 6px;
+                    background: WizardData.step == i ? Palette.accent-soft : (WizardData.step > i ? #ffffff08 : transparent);
+                    Text {
+                        text: (i + 1) + " · " + step;
+                        color: WizardData.step == i ? Palette.accent : WizardData.step > i ? Palette.text : Palette.muted;
+                        font-size: 9.5px; font-weight: 600;
+                        horizontal-alignment: center; vertical-alignment: center;
+                    }
+                }
+            }
+            Divider { }
+
+            Rectangle {
+                vertical-stretch: 1;
+                clip: true;
+                ScrollView {
+                    width: 100%;
+                    height: 100%;
+                    content-width: self.width;
+
+                    // Step 0 — basics
+                    if WizardData.step == 0: VerticalLayout {
+                        spacing: 12px;
+                        SectionTitle { title: "Basics"; subtitle: "Dates define when timetable tasks are generated. Timezone controls all displayed times."; }
+                        Field { label: "Plan name"; text <=> WizardData.name; placeholder: "Kerala Plus One — Christmas 2026"; }
+                        HorizontalLayout {
+                            spacing: 10px;
+                            Field { label: "Academic year"; text <=> WizardData.year; placeholder: "2026"; horizontal-stretch: 1; }
+                            Field { label: "Timezone"; text <=> WizardData.timezone; placeholder: "Asia/Kolkata"; horizontal-stretch: 2; }
+                        }
+                        HorizontalLayout {
+                            spacing: 10px;
+                            Field { label: "Start date"; text <=> WizardData.start; placeholder: "2026-11-16"; horizontal-stretch: 1; }
+                            Field { label: "End date"; text <=> WizardData.end; placeholder: "2026-12-17"; horizontal-stretch: 1; }
+                        }
+                        if WizardData.errors.length > 0: VerticalLayout {
+                            spacing: 2px;
+                            for err[i] in WizardData.errors: Text { text: "· " + err; color: Palette.danger; font-size: 11px; wrap: word-wrap; }
+                        }
+                    }
+
+                    // Step 1 — syllabus
+                    if WizardData.step == 1: VerticalLayout {
+                        spacing: 10px;
+                        SectionTitle { title: "Syllabus"; subtitle: "Subjects without portions (like Hindi) can be added with an empty chapter list and filled later."; }
+                        HorizontalLayout {
+                            min-width: 260px;
+                            spacing: 10px;
+                            VerticalLayout {
+                                min-width: 250px;
+                                max-width: 300px;
+                                spacing: 4px;
+                                for s[i] in WizardData.subjects: Rectangle {
+                                    height: 38px;
+                                    border-radius: 7px;
+                                    background: WizardData.subject-index == i ? Palette.accent-soft : (st.has-hover ? #ffffff06 : transparent);
+                                    st := TouchArea { clicked => { WizardData.select-subject(i); } mouse-cursor: pointer; }
+                                    Rectangle { x: 0; y: 6px; width: 3px; height: 26px; border-radius: 2px; background: s.tint; }
+                                    Text { x: 12px; y: 0; width: parent.width - 58px; height: parent.height; text: s.name; color: Palette.text; font-size: 11.5px; vertical-alignment: center; overflow: elide; }
+                                    Text { x: parent.width - 44px; y: 0; width: 36px; height: parent.height; text: s.chapter-count; color: Palette.muted; font-size: 10px; horizontal-alignment: right; vertical-alignment: center; }
+                                }
+                                HorizontalLayout {
+                                    spacing: 5px;
+                                    Field { text <=> WizardData.new-subject; placeholder: "New subject"; horizontal-stretch: 1; }
+                                    AppButton { text: "+"; kind: 1; button-width: 30px; button-height: 34px; clicked => { WizardData.add-subject(WizardData.new-subject); } }
+                                }
+                            }
+                            VerticalLayout {
+                                horizontal-stretch: 1;
+                                spacing: 5px;
+                                Text { text: WizardData.selected-subject-name == "" ? "Select a subject" : "Chapters · " + WizardData.selected-subject-name; color: Palette.text; font-size: 12px; font-weight: 600; }
+                                for c[i] in WizardData.chapters: HorizontalLayout {
+                                    height: 32px;
+                                    spacing: 6px;
+                                    Text { text: c.title; color: Palette.text; font-size: 11px; horizontal-stretch: 1; vertical-alignment: center; overflow: elide; }
+                                    AppButton { text: "Remove"; kind: 2; button-width: 60px; button-height: 24px; clicked => { WizardData.remove-chapter(i); } }
+                                }
+                                if WizardData.chapters.length == 0: Text { text: "No chapters yet. This is allowed for subjects with pending portions."; color: Palette.muted; font-size: 10.5px; wrap: word-wrap; }
+                                HorizontalLayout {
+                                    spacing: 5px;
+                                    Field { text <=> WizardData.new-chapter; placeholder: "New chapter title"; horizontal-stretch: 1; }
+                                    AppButton { text: "Add chapter"; kind: 1; button-width: 86px; button-height: 34px; clicked => { WizardData.add-chapter(WizardData.new-chapter); } }
+                                }
+                                if WizardData.subjects.length > 0: HorizontalLayout {
+                                    spacing: 6px;
+                                    Field { text <=> WizardData.subject-name; placeholder: "Rename selected subject"; horizontal-stretch: 1; }
+                                    AppButton { text: "Rename"; kind: 2; button-width: 64px; button-height: 34px; clicked => { WizardData.rename-subject(WizardData.subject-name); } }
+                                    AppButton { text: "Delete subject"; kind: 3; button-width: 92px; button-height: 34px; clicked => { WizardData.remove-subject(WizardData.subject-index); } }
+                                }
+                            }
+                        }
+                        if WizardData.subject-error != "": Text { text: WizardData.subject-error; color: Palette.danger; font-size: 11px; }
+                        if WizardData.errors.length > 0: Text { text: WizardData.errors[0]; color: Palette.danger; font-size: 11px; }
+                    }
+
+                    // Step 2 — exams
+                    if WizardData.step == 2: VerticalLayout {
+                        spacing: 10px;
+                        SectionTitle { title: "Exams"; subtitle: "Add every paper with its real start time. Countdowns use these exact times."; }
+                        for e[i] in WizardData.exams: HorizontalLayout {
+                            height: 38px;
+                            spacing: 8px;
+                            Text { text: e.date + "  " + e.time; color: Palette.muted; font-family: Palette.mono; font-size: 10px; width: 116px; vertical-alignment: center; }
+                            VerticalLayout {
+                                horizontal-stretch: 1; spacing: 1px; alignment: center;
+                                Text { text: e.label; color: Palette.text; font-size: 11.5px; font-weight: 600; overflow: elide; }
+                                Text { text: e.subject; color: Palette.muted; font-size: 9.5px; }
+                            }
+                            AppButton { text: "Remove"; kind: 2; button-width: 62px; button-height: 26px; clicked => { WizardData.remove-exam(i); } }
+                        }
+                        if WizardData.exams.length == 0: Text { text: "No exams yet. You can add exams later from the plan JSON import."; color: Palette.muted; font-size: 10.5px; }
+                        Divider { }
+                        HorizontalLayout {
+                            spacing: 8px;
+                            Field { label: "Exam name"; text <=> WizardData.exam-label; placeholder: "Physics"; horizontal-stretch: 2; }
+                            LabeledCombo { label: "Subject"; model: WizardData.subject-names; current-index: WizardData.exam-subject; selected(index) => { WizardData.exam-subject = index; } horizontal-stretch: 1; }
+                        }
+                        HorizontalLayout {
+                            spacing: 8px;
+                            Field { label: "Date"; text <=> WizardData.exam-date; placeholder: "2026-11-30"; horizontal-stretch: 1; }
+                            Field { label: "Start time"; text <=> WizardData.exam-time; placeholder: "13:30"; horizontal-stretch: 1; }
+                            Field { label: "Session"; text <=> WizardData.exam-session; placeholder: "Afternoon"; horizontal-stretch: 1; }
+                            AppButton { text: "Add exam"; kind: 0; button-width: 84px; button-height: 34px; clicked => { WizardData.add-exam(WizardData.exam-label, WizardData.exam-subject, WizardData.exam-date, WizardData.exam-time, WizardData.exam-session); } }
+                        }
+                        if WizardData.exam-error != "": Text { text: WizardData.exam-error; color: Palette.danger; font-size: 11px; }
+                    }
+
+                    // Step 3 — schedule
+                    if WizardData.step == 3: VerticalLayout {
+                        spacing: 10px;
+                        SectionTitle { title: "Weekly schedule"; subtitle: "Choose a template and its study slots. Fixed meal and sleep gaps are preserved."; }
+                        LabeledCombo { label: "Template"; model: WizardData.template-names; current-index: WizardData.template-index; selected(index) => { WizardData.set-template(index); } }
+                        for s[i] in WizardData.slots: HorizontalLayout {
+                            height: 34px;
+                            spacing: 8px;
+                            Text { text: s.time; color: Palette.muted; font-family: Palette.mono; font-size: 9.5px; width: 108px; vertical-alignment: center; }
+                            Rectangle { width: 3px; height: 16px; border-radius: 2px; background: Palette.accent; }
+                            Text { text: s.title; color: Palette.text; font-size: 11px; horizontal-stretch: 1; vertical-alignment: center; }
+                            Pill { text: s.kind; tone: 0; }
+                            AppButton { text: "Edit"; kind: 2; button-width: 44px; button-height: 24px; clicked => { WizardData.edit-slot(i); } }
+                            AppButton { text: "Remove"; kind: 2; button-width: 58px; button-height: 24px; clicked => { WizardData.remove-slot(i); } }
+                        }
+                        HorizontalLayout {
+                            spacing: 6px;
+                            Field { label: "Title"; text <=> WizardData.slot-title; placeholder: "Maths practice"; horizontal-stretch: 2; }
+                            Field { label: "Start"; text <=> WizardData.slot-start; placeholder: "16:00"; min-width: 74px; max-width: 90px; }
+                            Field { label: "End"; text <=> WizardData.slot-end; placeholder: "17:15"; min-width: 74px; max-width: 90px; }
+                            LabeledCombo { label: "Kind"; model: ["Study", "Break", "Meal", "Sleep", "School", "Travel"]; current-index: WizardData.slot-kind; selected(index) => { WizardData.slot-kind = index; } min-width: 100px; }
+                        }
+                        HorizontalLayout {
+                            spacing: 8px;
+                            LabeledCombo { label: "Subject"; model: WizardData.subject-names; current-index: WizardData.slot-subject; selected(index) => { WizardData.slot-subject = index; } min-width: 160px; }
+                            if WizardData.editing-slot == "": AppButton { text: "Add slot"; kind: 1; button-width: 76px; button-height: 34px; clicked => { WizardData.add-slot(WizardData.slot-title, WizardData.slot-start, WizardData.slot-end, WizardData.slot-kind, WizardData.slot-subject); } }
+                            if WizardData.editing-slot != "": AppButton { text: "Save slot"; kind: 0; button-width: 80px; button-height: 34px; clicked => { WizardData.save-slot(WizardData.slot-title, WizardData.slot-start, WizardData.slot-end, WizardData.slot-kind, WizardData.slot-subject); } }
+                            Rectangle { horizontal-stretch: 1; }
+                            Toggle { label: "Generate tasks for the plan dates"; checked: WizardData.generate-tasks; toggled(v) => { WizardData.set-generate-tasks(v); } }
+                        }
+                        if WizardData.schedule-error != "": Text { text: WizardData.schedule-error; color: Palette.danger; font-size: 11px; }
+                    }
+
+                    // Step 4 — review
+                    if WizardData.step == 4: VerticalLayout {
+                        spacing: 10px;
+                        SectionTitle { title: "Review"; subtitle: "The plan is created in one transaction. Nothing is half-written."; }
+                        Text { text: WizardData.summary; color: Palette.text; font-size: 12px; wrap: word-wrap; }
+                        if WizardData.errors.length == 0: Text { text: "Ready to create. Timetable tasks will be generated for the chosen date range."; color: Palette.success; font-size: 11px; }
+                        for err[i] in WizardData.errors: Text { text: "· " + err; color: Palette.danger; font-size: 11px; wrap: word-wrap; }
+                    }
+                }
+            }
+
+            Divider { }
+            HorizontalLayout {
+                spacing: 8px;
+                AppButton { text: "Cancel"; kind: 2; button-width: 72px; clicked => { WizardData.cancel(); } }
+                if WizardData.step > 0: AppButton { text: "Back"; kind: 1; button-width: 70px; clicked => { WizardData.back(); } }
+                Rectangle { horizontal-stretch: 1; }
+                Text { text: "Step " + (WizardData.step + 1) + " of " + WizardData.step-names.length; color: Palette.muted; font-size: 10px; vertical-alignment: center; }
+                if WizardData.step < 4: AppButton { text: "Next"; kind: 0; button-width: 82px; clicked => { WizardData.next(); } }
+                if WizardData.step == 4: AppButton { text: "Create plan"; kind: 0; button-width: 106px; clicked => { WizardData.create(); } }
+            }
+        }
+    }
+}

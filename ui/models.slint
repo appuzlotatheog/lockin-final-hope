@@ -1,0 +1,258 @@
+// Plain data structs shared by Rust and the UI.
+
+export struct PlanChoice {
+    id: string,
+    label: string,
+}
+
+export struct OptionItem {
+    id: string,
+    label: string,
+}
+
+export struct AgendaItem {
+    id: string,
+    title: string,
+    subject: string,
+    tint: color,
+    start: string,
+    end: string,
+    status: string,
+    status-index: int,
+    is-fixed: bool,
+    is-break: bool,
+    kind: string,
+    minutes: int,
+    chapter-id: string,
+    notes: string,
+    date: string,
+}
+
+export struct RevisionItem {
+    id: string,
+    title: string,
+    subject: string,
+    due: string,
+    overdue: bool,
+    chapter-id: string,
+    interval-text: string,
+    result: string,
+    state: string,
+    ease-text: string,
+}
+
+export struct ExamCard {
+    id: string,
+    label: string,
+    subject: string,
+    subject-id: string,
+    date-text: string,
+    time-text: string,
+    countdown: string,
+    days-left: int,
+    tint: color,
+    session: string,
+    progress: int,
+    chapters-ready: int,
+    chapters-total: int,
+    is-past: bool,
+}
+
+export struct SubjectRow {
+    id: string,
+    name: string,
+    tint: color,
+    chapter-count: int,
+    ready-count: int,
+    progress: int,
+}
+
+export struct ChapterRow {
+    id: string,
+    subject-id: string,
+    title: string,
+    status: string,
+    status-index: int,
+    checklist-done: int,
+    concept: bool,
+    textbook: bool,
+    exercises: bool,
+    selftest: bool,
+    confidence: int,
+    questions: int,
+    correct: int,
+    accuracy-text: string,
+    study-text: string,
+    last-studied: string,
+    next-revision: string,
+    tint: color,
+    subject: string,
+    notes: string,
+}
+
+export struct SessionRow {
+    id: string,
+    subject: string,
+    chapter: string,
+    mode: string,
+    start: string,
+    focused: string,
+    status: string,
+}
+
+export struct SlotRow {
+    id: string,
+    template-id: string,
+    title: string,
+    kind: string,
+    kind-index: int,
+    start: string,
+    end: string,
+    subject: string,
+    tint: color,
+}
+
+export struct TemplateRow {
+    id: string,
+    name: string,
+    day-types: string,
+    slot-count: int,
+}
+
+export struct WeekDay {
+    date: string,
+    label: string,
+    weekday: string,
+    minutes: int,
+    task-count: int,
+    done-count: int,
+    is-today: bool,
+}
+
+export struct BarPoint {
+    label: string,
+    weekday: string,
+    focused: int,
+    planned: int,
+    height: float,
+    planned-height: float,
+    is-today: bool,
+}
+
+export struct SubjectSliceData {
+    name: string,
+    tint: color,
+    minutes: int,
+    percent: int,
+    text: string,
+}
+
+export struct StatusSlice {
+    label: string,
+    count: int,
+    percent: int,
+    tone: string,
+}
+
+export struct MockRowData {
+    id: string,
+    name: string,
+    subject: string,
+    date: string,
+    score: string,
+    percent: int,
+    accuracy: string,
+    weak: string,
+    duration: string,
+}
+
+export struct MistakeRowData {
+    id: string,
+    subject: string,
+    chapter: string,
+    question: string,
+    explanation: string,
+    resolved: bool,
+}
+
+export struct SleepItem {
+    id: string,
+    kind: string,
+    range: string,
+    energy: string,
+    duration: string,
+}
+
+export struct HeatCell {
+    level: int,
+    tooltip: string,
+    blank: bool,
+}
+
+export struct PreviewData {
+    plan-name: string,
+    plan-id: string,
+    exists: bool,
+    exists-text: string,
+    span: string,
+    summary: string,
+    subjects: string,
+    chapters: string,
+    exams: string,
+    templates: string,
+    tasks: string,
+    warnings: string,
+    errors: string,
+    can-import: bool,
+}
+
+export struct PlanRowData {
+    id: string,
+    name: string,
+    span: string,
+    archived: bool,
+    current: bool,
+}
+
+export struct WizardSubjectRow {
+    index: int,
+    name: string,
+    tint: color,
+    chapter-count: int,
+}
+
+export struct WizardChapterRow {
+    index: int,
+    title: string,
+}
+
+export struct WizardExamRow {
+    index: int,
+    label: string,
+    subject: string,
+    date: string,
+    time: string,
+}
+
+export struct WizardSlotRow {
+    index: int,
+    title: string,
+    time: string,
+    kind: string,
+    subject: string,
+}
+
+export struct BuilderSubjectRow {
+    index: int,
+    name: string,
+    tint: color,
+    chapters: string,
+}
+
+export struct BuilderExamRow {
+    index: int,
+    label: string,
+    subject: string,
+    date: string,
+    time: string,
+}

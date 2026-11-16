@@ -1,0 +1,320 @@
+// Overview: today's plan, recommendation, revision pressure, sleep.
+
+import { Palette, Metrics } from "../theme.slint";
+import {
+    AppButton, Card, Divider, Dot, Pill, ProgressBar, SectionTitle, EmptyState,
+    AgendaRow, Field, TextArea, LabeledCombo, Modal, StatTile
+} from "../components.slint";
+import { OverviewData, Shell } from "../state.slint";
+import { ScrollView } from "std-widgets.slint";
+
+export component OverviewPage inherits Rectangle {
+    background: transparent;
+
+    ScrollView {
+        width: parent.width;
+        height: parent.height;
+        content-width: self.width;
+        VerticalLayout {
+            padding: Metrics.page-pad;
+            spacing: 14px;
+
+            HorizontalLayout {
+                spacing: 12px;
+                VerticalLayout {
+                    spacing: 4px;
+                    horizontal-stretch: 1;
+                    Text {
+                        text: OverviewData.greeting;
+                        color: Palette.text;
+                        font-size: 25px;
+                        font-weight: 750;
+                    }
+                    Text {
+                        text: OverviewData.date-line + "   ·   " + OverviewData.plan-name + "   ·   " + OverviewData.plan-span;
+                        color: Palette.muted;
+                        font-size: 12px;
+                    }
+                }
+                AppButton { text: "Log sleep"; kind: 1; button-width: 98px; clicked => { OverviewData.open-sleep(); } }
+                AppButton { text: "Start focus"; kind: 0; button-width: 106px; clicked => { Shell.quick-focus(); } }
+            }
+
+            if OverviewData.next-exam-label != "" && OverviewData.exam-mode: Rectangle {
+                height: 48px;
+                border-radius: Metrics.radius-sm;
+                background: Palette.accent-soft;
+                border-width: 1px;
+                border-color: Palette.accent.transparentize(0.55);
+                HorizontalLayout {
+                    padding-left: 16px; padding-right: 12px;
+                    spacing: 12px;
+                    Dot { dot-color: Palette.accent; }
+                    Text {
+                        text: "Exam mode · next paper: " + OverviewData.next-exam-label;
+                        color: Palette.text; font-size: 12px; font-weight: 600;
+                        vertical-alignment: center; horizontal-stretch: 1;
+                    }
+                    Text {
+                        text: OverviewData.next-exam-countdown;
+                        color: Palette.accent; font-size: 12px; font-weight: 700;
+                        vertical-alignment: center;
+                    }
+                    AppButton { text: "Exams"; kind: 2; button-width: 54px; button-height: 28px; clicked => { OverviewData.open-page(5); } }
+                }
+            }
+
+            HorizontalLayout {
+                spacing: 12px;
+                StatTile {
+                    label: "FOCUS TODAY";
+                    value: OverviewData.focused-min + "m";
+                    sub: "of " + OverviewData.goal-min + "m goal · " + round(OverviewData.goal-pct) + "%";
+                    tone: OverviewData.goal-pct >= 100 ? 2 : 1;
+                }
+                StatTile {
+                    label: "EXAM READY";
+                    value: OverviewData.chapters-done + " / " + OverviewData.chapters-total;
+                    sub: "chapters · " + round(OverviewData.chapter-pct) + "% complete";
+                }
+                StatTile {
+                    label: "REVISION";
+                    value: OverviewData.revisions-due + " due";
+                    sub: OverviewData.revisions-overdue > 0 ? OverviewData.revisions-overdue + " overdue · review before new study" : "Nothing overdue";
+                    tone: OverviewData.revisions-overdue > 0 ? 3 : 0;
+                }
+                StatTile {
+                    label: "SLEEP";
+                    value: OverviewData.sleep-hours;
+                    sub: "target " + OverviewData.sleep-target + " · " + OverviewData.sleep-recorded;
+                    tone: 0;
+                }
+                StatTile {
+                    label: "STREAK";
+                    value: OverviewData.streak + "d";
+                    sub: OverviewData.tasks-done + " of " + OverviewData.tasks-total + " tasks today";
+                    tone: OverviewData.streak > 0 ? 2 : 0;
+                }
+            }
+
+            if OverviewData.overdue-tasks > 0: Rectangle {
+                height: 46px;
+                border-radius: Metrics.radius-sm;
+                background: Palette.warning-soft;
+                border-width: 1px;
+                border-color: Palette.warning.transparentize(0.6);
+                HorizontalLayout {
+                    padding-left: 16px; padding-right: 10px;
+                    spacing: 10px;
+                    Text {
+                        text: OverviewData.overdue-tasks + " unfinished task" + (OverviewData.overdue-tasks == 1 ? "" : "s") + " from earlier days. Recover them without losing history.";
+                        color: Palette.warning; font-size: 11.5px; vertical-alignment: center; horizontal-stretch: 1;
+                    }
+                    AppButton { text: "Open timetable"; kind: 2; button-width: 106px; button-height: 28px; clicked => { OverviewData.open-page(1); } }
+                }
+            }
+
+            HorizontalLayout {
+                spacing: 14px;
+
+                VerticalLayout {
+                    horizontal-stretch: 3;
+                    spacing: 14px;
+                    Card {
+                        VerticalLayout {
+                            padding: 16px;
+                            spacing: 4px;
+                            HorizontalLayout {
+                                spacing: 8px;
+                                SectionTitle {
+                                    title: "Today's plan";
+                                    subtitle: OverviewData.tasks-done + " of " + OverviewData.tasks-total + " done" + (OverviewData.next-block != "" ? "  ·  next: " + OverviewData.next-block + " at " + OverviewData.next-block-time : "");
+                                    horizontal-stretch: 1; }
+                                AppButton { text: "Timetable"; kind: 2; button-width: 74px; button-height: 30px; clicked => { OverviewData.open-page(1); } }
+                            }
+                            Divider { }
+                            if OverviewData.agenda.length == 0: VerticalLayout {
+                                padding-top: 26px; padding-bottom: 26px;
+                                EmptyState {
+                                    title: "Nothing scheduled for this day";
+                                    body: "The seeded plan starts on 16 Nov 2026. Jump ahead, check the week view, or start a free focus session.";
+                                }
+                                HorizontalLayout {
+                                    alignment: center; spacing: 8px;
+                                    AppButton { text: "Open timetable"; kind: 1; button-width: 116px; clicked => { OverviewData.open-page(1); } }
+                                    AppButton { text: "Focus now"; kind: 0; button-width: 94px; clicked => { Shell.quick-focus(); } }
+                                }
+                            }
+                            for item[i] in OverviewData.agenda: AgendaRow {
+                                item: item;
+                                overdue: false;
+                                start => { if (item.is-fixed || item.is-break) { OverviewData.open-page(1); } else { OverviewData.start-focus(item.id); } }
+                                complete => { OverviewData.complete-task(item.id); }
+                                reopen => { OverviewData.reopen-task(item.id); }
+                                skip => { OverviewData.skip-task(item.id); }
+                                move => { OverviewData.move-to-today(item.id); }
+                                edit => { OverviewData.open-page(1); }
+                            }
+                        }
+                    }
+
+                    Card {
+                        VerticalLayout {
+                            padding: 16px;
+                            spacing: 9px;
+                            HorizontalLayout {
+                                SectionTitle { title: "Revision queue"; subtitle: OverviewData.revisions-due + " due today · " + OverviewData.revisions-overdue + " overdue"; horizontal-stretch: 1; }
+                                AppButton { text: "Open queue"; kind: 2; button-width: 86px; button-height: 30px; clicked => { OverviewData.open-page(4); } }
+                            }
+                            Divider { }
+                            if OverviewData.revision-rows.length == 0: Text {
+                                text: "No revisions due in the next few days. Grade chapters after study to build the queue.";
+                                color: Palette.muted; font-size: 11.5px; wrap: word-wrap;
+                            }
+                            for rev[i] in OverviewData.revision-rows: HorizontalLayout {
+                                height: 34px;
+                                spacing: 8px;
+                                Rectangle { width: 3px; height: 18px; border-radius: 2px; background: rev.overdue ? Palette.danger : Palette.accent; }
+                                VerticalLayout {
+                                    horizontal-stretch: 1; spacing: 0px; alignment: center;
+                                    Text { text: rev.title; color: Palette.text; font-size: 11.5px; overflow: elide; }
+                                    Text { text: rev.subject + " · " + rev.interval-text; color: Palette.muted; font-size: 9.5px; overflow: elide; }
+                                }
+                                Text { text: rev.due; color: rev.overdue ? Palette.danger : Palette.muted; font-size: 10px; vertical-alignment: center; }
+                            }
+                        }
+                    }
+                }
+
+                VerticalLayout {
+                    min-width: 330px;
+                    max-width: 330px;
+                    spacing: 14px;
+
+                    Rectangle {
+                        border-radius: Metrics.radius;
+                        background: Palette.surface;
+                        border-width: 1px;
+                        border-color: Palette.accent.transparentize(0.45);
+                        VerticalLayout {
+                            padding: 16px;
+                            spacing: 8px;
+                            HorizontalLayout {
+                                spacing: 7px;
+                                Dot { dot-color: Palette.accent; }
+                                Text { text: "RECOMMENDED NEXT"; color: Palette.accent; font-size: 10px; font-weight: 700; letter-spacing: 0.8px; vertical-alignment: center; }
+                                Rectangle { horizontal-stretch: 1; }
+                                Pill { text: OverviewData.rec-minutes + " min"; tone: 1; }
+                            }
+                            Text {
+                                text: OverviewData.rec-title != "" ? OverviewData.rec-title : "You're caught up";
+                                color: Palette.text; font-size: 16px; font-weight: 700; wrap: word-wrap;
+                            }
+                            Text {
+                                text: OverviewData.rec-subject;
+                                color: Palette.muted; font-size: 11.5px;
+                            }
+                            Text {
+                                text: OverviewData.rec-reason;
+                                color: Palette.muted; font-size: 11px; wrap: word-wrap;
+                            }
+                            Rectangle { height: 2px; }
+                            AppButton {
+                                text: OverviewData.rec-chapter-id != "" ? "Start recommended" : "Start free focus";
+                                kind: 0; stretch: true;
+                                clicked => {
+                                    if (OverviewData.rec-task-id != "") { OverviewData.start-focus(OverviewData.rec-task-id); }
+                                    else if (OverviewData.rec-chapter-id != "") { OverviewData.start-chapter(OverviewData.rec-chapter-id); }
+                                    else { Shell.quick-focus(); }
+                                }
+                            }
+                            AppButton { text: "Choose another block"; kind: 2; stretch: true; button-height: 30px; clicked => { OverviewData.open-page(1); } }
+                        }
+                    }
+
+                    Card {
+                        VerticalLayout {
+                            padding: 16px;
+                            spacing: 9px;
+                            SectionTitle { title: "Sleep"; subtitle: OverviewData.sleep-recorded + " · target " + OverviewData.sleep-target; }
+                            HorizontalLayout {
+                                spacing: 10px;
+                                Text { text: OverviewData.sleep-hours; color: Palette.text; font-size: 22px; font-weight: 700; vertical-alignment: bottom; }
+                                Text { text: "last night"; color: Palette.muted; font-size: 10px; vertical-alignment: bottom; horizontal-stretch: 1; }
+                            }
+                            ProgressBar {
+                                value: OverviewData.sleep-pct;
+                                bar-color: OverviewData.sleep-pct >= 95 ? Palette.success : OverviewData.sleep-pct >= 75 ? Palette.warning : Palette.danger;
+                            }
+                            if OverviewData.sleep-rows.length == 0: Text {
+                                text: "No sleep logged yet. Sleep is tracked separately so focus targets stay honest.";
+                                color: Palette.muted; font-size: 10.5px; wrap: word-wrap;
+                            }
+                            for s[i] in OverviewData.sleep-rows: HorizontalLayout {
+                                height: 25px; spacing: 6px;
+                                Text { text: s.kind; color: Palette.muted; font-size: 10px; width: 70px; vertical-alignment: center; }
+                                Text { text: s.range; color: Palette.text; font-size: 10px; font-family: Palette.mono; horizontal-stretch: 1; vertical-alignment: center; }
+                                Text { text: s.duration; color: Palette.muted; font-size: 10px; vertical-alignment: center; }
+                            }
+                            AppButton { text: "Log sleep / nap"; kind: 1; stretch: true; button-height: 30px; clicked => { OverviewData.open-sleep(); } }
+                        }
+                    }
+
+                    Card {
+                        VerticalLayout {
+                            padding: 16px;
+                            spacing: 6px;
+                            SectionTitle { title: "Next exam"; }
+                            VerticalLayout {
+                                spacing: 2px;
+                                if OverviewData.next-exam-label != "": Text { text: OverviewData.next-exam-label; color: Palette.text; font-size: 13px; font-weight: 600; wrap: word-wrap; }
+                                if OverviewData.next-exam-label != "": Text { text: OverviewData.next-exam-when; color: Palette.muted; font-size: 11px; }
+                                if OverviewData.next-exam-label != "": Text { text: OverviewData.next-exam-countdown; color: Palette.accent; font-size: 12px; font-weight: 700; }
+                                if OverviewData.next-exam-label == "": Text { text: "No upcoming exam in this plan."; color: Palette.muted; font-size: 11.5px; wrap: word-wrap; }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    Modal {
+        open: OverviewData.sleep-dialog;
+        title: "Log sleep";
+        subtitle: "Sleep is recorded separately from focus. Overlapping entries are merged, not double-counted.";
+        dialog-width: 480px;
+        dialog-height: 520px;
+        close => { OverviewData.close-sleep(); }
+        VerticalLayout {
+            spacing: 10px;
+            LabeledCombo {
+                label: "Entry type";
+                model: ["Night sleep", "Nap", "School nap"];
+                current-index: OverviewData.sleep-kind-index;
+                selected(index) => { OverviewData.sleep-kind-index = index; }
+            }
+            HorizontalLayout {
+                spacing: 10px;
+                Field { label: "Started"; text <=> OverviewData.sleep-start; placeholder: "22:30"; horizontal-stretch: 1; }
+                Field { label: "Ended"; text <=> OverviewData.sleep-end; placeholder: "06:45"; horizontal-stretch: 1; }
+            }
+            LabeledCombo {
+                label: "Energy after waking (1–5)";
+                model: ["1 · drained", "2 · low", "3 · okay", "4 · good", "5 · sharp"];
+                current-index: OverviewData.sleep-energy - 1;
+                selected(index) => { OverviewData.sleep-energy = index + 1; }
+            }
+            Field { label: "Note"; text <=> OverviewData.sleep-note; placeholder: "Late night, woke once…"; }
+            Rectangle { vertical-stretch: 1; }
+            HorizontalLayout {
+                spacing: 10px;
+                AppButton { text: "Cancel"; kind: 1; stretch: true; clicked => { OverviewData.close-sleep(); } }
+                AppButton {
+                    text: "Save sleep"; kind: 0; stretch: true;
+                    clicked => { OverviewData.save-sleep(OverviewData.sleep-kind-index, OverviewData.sleep-start, OverviewData.sleep-end, OverviewData.sleep-energy, OverviewData.sleep-note); }
+                }
+            }
+        }
+    }
+}

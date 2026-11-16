@@ -1,0 +1,530 @@
+// All UI state lives in globals so Rust can drive every page without reaching
+// into nested components. Callbacks are ids/values only; logic stays in Rust.
+
+import {
+    AgendaItem, RevisionItem, ExamCard, SubjectRow, ChapterRow, SessionRow,
+    SlotRow, TemplateRow, WeekDay, BarPoint, SubjectSliceData, StatusSlice,
+    MockRowData, MistakeRowData, SleepItem, HeatCell, PreviewData, PlanRowData,
+    WizardSubjectRow, WizardChapterRow, WizardExamRow, WizardSlotRow,
+    BuilderSubjectRow, BuilderExamRow
+} from "models.slint";
+
+export global Shell {
+    in-out property <int> current-page: 0;
+    in-out property <string> page-title: "Overview";
+    in-out property <string> page-context: "";
+    in-out property <string> plan-name: "";
+    in-out property <string> plan-id: "";
+    in-out property <string> plan-span: "";
+    in-out property <[string]> plan-names: [];
+    in-out property <int> plan-index: 0;
+    in-out property <string> toast-text: "";
+    // 0 info, 1 success, 2 error
+    in-out property <int> toast-tone: 0;
+    in-out property <bool> toast-open: false;
+    in-out property <string> status-text: "Local only · SQLite";
+    in-out property <string> today-text: "";
+    in-out property <bool> exam-mode: false;
+    in-out property <int> revision-badge: 0;
+    in-out property <string> version: "0.1.0";
+    in-out property <[string]> nav-labels: ["Overview", "Timetable", "Syllabus", "Focus", "Revision Queue", "Exams", "Analytics", "Import / Export", "Settings"];
+    callback navigate(int);
+    callback plan-selected(int);
+    callback open-new-plan();
+    callback quick-focus();
+    callback dismiss-toast();
+}
+
+export global OverviewData {
+    in-out property <string> greeting: "";
+    in-out property <string> date-line: "";
+    in-out property <string> plan-name: "";
+    in-out property <string> plan-span: "";
+    in-out property <string> next-exam-label: "";
+    in-out property <string> next-exam-countdown: "";
+    in-out property <string> next-exam-when: "";
+    in-out property <bool> exam-mode: false;
+    in-out property <[AgendaItem]> agenda: [];
+    in-out property <int> planned-min: 0;
+    in-out property <int> focused-min: 0;
+    in-out property <int> goal-min: 0;
+    in-out property <float> goal-pct: 0;
+    in-out property <int> chapters-done: 0;
+    in-out property <int> chapters-total: 0;
+    in-out property <float> chapter-pct: 0;
+    in-out property <int> revisions-due: 0;
+    in-out property <int> revisions-overdue: 0;
+    in-out property <int> overdue-tasks: 0;
+    in-out property <int> streak: 0;
+    in-out property <string> sleep-hours: "0.0h";
+    in-out property <float> sleep-pct: 0;
+    in-out property <int> tasks-done: 0;
+    in-out property <int> tasks-total: 0;
+    in-out property <string> next-block: "";
+    in-out property <string> next-block-subject: "";
+    in-out property <string> next-block-time: "";
+    in-out property <string> rec-title: "";
+    in-out property <string> rec-subject: "";
+    in-out property <string> rec-reason: "";
+    in-out property <int> rec-minutes: 0;
+    in-out property <string> rec-task-id: "";
+    in-out property <string> rec-chapter-id: "";
+    in-out property <string> rec-kind: "";
+    in-out property <[RevisionItem]> revision-rows: [];
+    in-out property <[SleepItem]> sleep-rows: [];
+    in-out property <string> sleep-target: "";
+    in-out property <string> sleep-recorded: "";
+    in-out property <bool> sleep-dialog: false;
+    in-out property <int> sleep-kind-index: 0;
+    in-out property <string> sleep-start: "";
+    in-out property <string> sleep-end: "";
+    in-out property <int> sleep-energy: 4;
+    in-out property <string> sleep-note: "";
+
+    callback start-focus(string);
+    callback start-chapter(string);
+    callback complete-task(string);
+    callback reopen-task(string);
+    callback skip-task(string);
+    callback move-to-today(string);
+    callback open-page(int);
+    callback open-sleep();
+    callback close-sleep();
+    callback save-sleep(int, string, string, int, string);
+    callback delete-sleep(string);
+}
+
+export global TimetableData {
+    in-out property <string> selected-date: "";
+    in-out property <string> date-label: "";
+    in-out property <string> weekday-label: "";
+    in-out property <string> day-type-label: "";
+    in-out property <int> day-type-index: 0;
+    in-out property <bool> is-custom-day: false;
+    in-out property <int> view-mode: 0;
+    in-out property <[AgendaItem]> rows: [];
+    in-out property <[WeekDay]> week-days: [];
+    in-out property <[AgendaItem]> week-mon: [];
+    in-out property <[AgendaItem]> week-tue: [];
+    in-out property <[AgendaItem]> week-wed: [];
+    in-out property <[AgendaItem]> week-thu: [];
+    in-out property <[AgendaItem]> week-fri: [];
+    in-out property <[AgendaItem]> week-sat: [];
+    in-out property <[AgendaItem]> week-sun: [];
+    in-out property <string> day-summary: "";
+    in-out property <int> day-planned: 0;
+    in-out property <int> day-focused: 0;
+    in-out property <[AgendaItem]> backlog: [];
+    in-out property <bool> backlog-open: false;
+
+    // Task editor
+    in-out property <bool> editor-open: false;
+    in-out property <string> editor-id: "";
+    in-out property <string> editor-title: "";
+    in-out property <string> editor-date: "";
+    in-out property <string> editor-start: "";
+    in-out property <string> editor-end: "";
+    in-out property <int> editor-subject: 0;
+    in-out property <int> editor-chapter: 0;
+    in-out property <int> editor-type: 0;
+    in-out property <int> editor-priority: 1;
+    in-out property <int> editor-status: 0;
+    in-out property <string> editor-error: "";
+    in-out property <[string]> subject-names: [];
+    in-out property <[string]> chapter-names: [];
+    in-out property <[string]> type-names: ["Study", "Revision", "Mock test", "Backlog"];
+    in-out property <[string]> priority-names: ["Low", "Normal", "High"];
+    in-out property <[string]> status-names: ["Planned", "In progress", "Completed", "Partially done", "Skipped"];
+
+    // Templates
+    in-out property <[TemplateRow]> templates: [];
+    in-out property <int> template-index: 0;
+    in-out property <[SlotRow]> template-slots: [];
+    in-out property <bool> template-open: false;
+    in-out property <bool> slot-open: false;
+    in-out property <string> slot-id: "";
+    in-out property <string> slot-title: "";
+    in-out property <string> slot-start: "";
+    in-out property <string> slot-end: "";
+    in-out property <int> slot-kind: 0;
+    in-out property <int> slot-subject: 0;
+    in-out property <string> slot-error: "";
+
+    // Replan confirmation
+    in-out property <bool> replan-open: false;
+    in-out property <string> replan-summary: "";
+    in-out property <int> replan-added: 0;
+    in-out property <int> replan-moved: 0;
+    in-out property <int> replan-protected: 0;
+    in-out property <bool> replan-has-work: false;
+
+    callback shift-day(int);
+    callback go-today();
+    callback set-view(int);
+    callback open-new-task();
+    callback open-edit-task(string);
+    callback start-task(string);
+    callback close-editor();
+    callback save-task(string, string, string, string, string, int, int, int, int, int);
+    callback subject-changed(int);
+    callback delete-task(string);
+    callback set-task-status(string, int);
+    callback open-replan();
+    callback close-replan();
+    callback confirm-replan();
+    callback set-day-type(int);
+    callback clear-day-type();
+    callback toggle-backlog();
+    callback move-backlog-today(string);
+    callback select-template(int);
+    callback open-template-panel();
+    callback add-template-slot();
+    callback edit-template-slot(string);
+    callback close-slot-editor();
+    callback save-template-slot(string, string, string, string, int, int);
+    callback delete-template-slot(string);
+    callback apply-template();
+    callback open-day(string);
+}
+
+export global SyllabusData {
+    in-out property <[SubjectRow]> subjects: [];
+    in-out property <int> subject-index: 0;
+    in-out property <string> subject-id: "";
+    in-out property <[ChapterRow]> chapters: [];
+    in-out property <string> search: "";
+    in-out property <int> filter: 0;
+    in-out property <string> detail-id: "";
+    in-out property <bool> detail-open: false;
+    in-out property <string> detail-title: "";
+    in-out property <string> detail-subject: "";
+    in-out property <int> detail-status: 0;
+    in-out property <bool> concept: false;
+    in-out property <bool> textbook: false;
+    in-out property <bool> exercises: false;
+    in-out property <bool> selftest: false;
+    in-out property <int> confidence: 0;
+    in-out property <string> questions: "0";
+    in-out property <string> correct: "0";
+    in-out property <string> accuracy-text: "—";
+    in-out property <string> study-text: "0m";
+    in-out property <string> last-studied: "—";
+    in-out property <string> next-revision: "—";
+    in-out property <string> notes: "";
+    in-out property <[string]> filter-names: ["All", "Not started", "Learning", "Needs practice", "Needs revision", "Exam ready"];
+    in-out property <[string]> status-names: ["Not started", "Learning", "Needs practice", "Needs revision", "Exam ready"];
+    in-out property <[string]> confidence-names: ["Unrated", "1 · shaky", "2 · low", "3 · okay", "4 · good", "5 · solid"];
+    in-out property <int> all-count: 0;
+    in-out property <int> ready-count: 0;
+    in-out property <bool> add-chapter-open: false;
+    in-out property <string> new-chapter-title: "";
+
+    callback select-subject(int);
+    callback select-chapter(string);
+    callback close-detail();
+    callback search-changed(string);
+    callback set-filter(int);
+    callback toggle-check(int);
+    callback set-status(int);
+    callback set-confidence(int);
+    callback save-metrics(string, string);
+    callback save-notes(string);
+    callback generate-revisions();
+    callback open-add-chapter();
+    callback close-add-chapter();
+    callback add-chapter(string);
+    callback delete-chapter(string);
+}
+
+export global FocusData {
+    in-out property <string> display: "45:00";
+    in-out property <string> phase-label: "Deep focus";
+    in-out property <string> state-label: "Ready when you are";
+    in-out property <bool> running: false;
+    in-out property <bool> paused: false;
+    in-out property <bool> active: false;
+    in-out property <bool> is-break: false;
+    in-out property <float> progress: 0;
+    in-out property <string> focused-today: "0m";
+    in-out property <string> break-today: "0m";
+    in-out property <int> preset: 0;
+    in-out property <[string]> preset-names: ["Deep · 45/10", "Short · 25/5", "Extended · 50/10", "Custom", "Stopwatch"];
+    in-out property <string> custom-focus: "40";
+    in-out property <string> custom-break: "8";
+    in-out property <[string]> subject-names: [];
+    in-out property <[string]> chapter-names: [];
+    in-out property <int> subject-index: 0;
+    in-out property <int> chapter-index: 0;
+    in-out property <string> linked-task: "";
+    in-out property <string> linked-chapter: "";
+    in-out property <string> error: "";
+    in-out property <[SessionRow]> sessions: [];
+    in-out property <int> session-count: 0;
+    in-out property <string> today-focus-total: "";
+    in-out property <bool> recovery-open: false;
+    in-out property <string> recovery-text: "";
+
+    callback start();
+    callback pause();
+    callback resume();
+    callback finish();
+    callback discard();
+    callback interrupt();
+    callback take-break();
+    callback end-break();
+    callback set-preset(int);
+    callback apply-custom(string, string);
+    callback set-subject(int);
+    callback set-chapter(int);
+    callback resume-recovered();
+    callback discard-recovered();
+    callback open-timetable();
+}
+
+export global RevisionData {
+    in-out property <int> tab: 0;
+    in-out property <[RevisionItem]> rows: [];
+    in-out property <int> due-count: 0;
+    in-out property <int> overdue-count: 0;
+    in-out property <int> upcoming-count: 0;
+    in-out property <int> completed-count: 0;
+    in-out property <bool> reschedule-open: false;
+    in-out property <string> reschedule-id: "";
+    in-out property <string> reschedule-date: "";
+    in-out property <[string]> tab-names: ["Due today", "Overdue", "Upcoming", "Completed"];
+    callback set-tab(int);
+    callback grade(string, int);
+    callback snooze(string, int);
+    callback open-reschedule(string);
+    callback close-reschedule();
+    callback save-reschedule(string);
+    callback start-revision(string);
+}
+
+export global ExamsData {
+    in-out property <[ExamCard]> exams: [];
+    in-out property <[MockRowData]> mocks: [];
+    in-out property <[MistakeRowData]> mistakes: [];
+    in-out property <bool> exam-mode: false;
+    in-out property <string> next-paper: "";
+    in-out property <string> next-paper-when: "";
+    in-out property <string> next-paper-subject-id: "";
+    in-out property <[ChapterRow]> focus-chapters: [];
+    in-out property <int> mock-count: 0;
+    in-out property <int> open-mistakes: 0;
+    in-out property <string> mock-avg: "—";
+
+    in-out property <bool> mock-open: false;
+    in-out property <string> mock-name: "";
+    in-out property <int> mock-subject: 0;
+    in-out property <string> mock-date: "";
+    in-out property <string> mock-score: "0";
+    in-out property <string> mock-max: "100";
+    in-out property <string> mock-duration: "90";
+    in-out property <string> mock-weak: "";
+    in-out property <string> mock-notes: "";
+    in-out property <string> mock-error: "";
+    in-out property <[string]> subject-names: [];
+
+    in-out property <bool> mistake-open: false;
+    in-out property <int> mistake-subject: 0;
+    in-out property <int> mistake-chapter: 0;
+    in-out property <string> mistake-question: "";
+    in-out property <string> mistake-explanation: "";
+    in-out property <string> mistake-error: "";
+    in-out property <[string]> chapter-names: [];
+
+    callback add-mock();
+    callback close-mock();
+    callback save-mock(string, int, string, string, string, string, string, string);
+    callback delete-mock(string);
+    callback add-mistake();
+    callback mistake-subject-changed(int);
+    callback close-mistake();
+    callback save-mistake(int, int, string, string);
+    callback toggle-mistake(string, bool);
+    callback set-exam-mode(bool);
+    callback study-paper(string);
+}
+
+export global AnalyticsData {
+    in-out property <int> range: 1;
+    in-out property <[string]> range-names: ["7 days", "30 days", "90 days"];
+    in-out property <int> focused-min: 0;
+    in-out property <int> planned-min: 0;
+    in-out property <string> focused-text: "0m";
+    in-out property <string> planned-text: "0m";
+    in-out property <int> tasks-done: 0;
+    in-out property <int> tasks-total: 0;
+    in-out property <int> completion-pct: 0;
+    in-out property <int> avg-session: 0;
+    in-out property <int> session-count: 0;
+    in-out property <int> chapters-ready: 0;
+    in-out property <int> chapters-total: 0;
+    in-out property <int> backlog-count: 0;
+    in-out property <int> recall-pct: 0;
+    in-out property <int> recall-good: 0;
+    in-out property <int> recall-total: 0;
+    in-out property <string> accuracy: "—";
+    in-out property <float> sleep-avg: 0;
+    in-out property <[BarPoint]> daily: [];
+    in-out property <[SubjectSliceData]> subjects: [];
+    in-out property <[StatusSlice]> statuses: [];
+    in-out property <[MockRowData]> mocks: [];
+    in-out property <[HeatCell]> heatmap: [];
+    callback set-range(int);
+}
+
+export global IoData {
+    in-out property <int> tab: 0;
+    in-out property <string> editor-text: "";
+    in-out property <string> feedback: "";
+    in-out property <int> feedback-tone: 0;
+    in-out property <[string]> tab-names: ["Builder", "Paste / Edit JSON", "Import file", "Export"];
+    in-out property <PreviewData> preview;
+    in-out property <bool> preview-open: false;
+    in-out property <int> import-mode: 0;
+    in-out property <bool> busy: false;
+    in-out property <string> file-path: "";
+
+    in-out property <string> builder-name: "";
+    in-out property <string> builder-id: "";
+    in-out property <string> builder-year: "";
+    in-out property <string> builder-start: "";
+    in-out property <string> builder-end: "";
+    in-out property <string> builder-timezone: "";
+    in-out property <string> builder-new-subject: "";
+    in-out property <string> builder-new-chapters: "";
+    in-out property <[BuilderSubjectRow]> builder-subjects: [];
+    in-out property <string> builder-exam-label: "";
+    in-out property <int> builder-exam-subject: 0;
+    in-out property <string> builder-exam-date: "";
+    in-out property <string> builder-exam-time: "13:30";
+    in-out property <[string]> builder-subject-names: [];
+    in-out property <[BuilderExamRow]> builder-exams: [];
+    in-out property <string> builder-error: "";
+    in-out property <string> schema-path: "schemas/lockin-plan.schema.json";
+
+    callback set-tab(int);
+    callback editor-changed(string);
+    callback format-json();
+    callback validate-json();
+    callback preview-import();
+    callback close-preview();
+    callback apply-import(int);
+    callback pick-file();
+    callback copy-json();
+    callback empty-template();
+    callback export-schema();
+    callback export-plan();
+    callback save-json-file();
+    callback export-backup();
+    callback restore-backup();
+    callback load-builder-current();
+    callback builder-add-subject(string, string);
+    callback builder-remove-subject(int);
+    callback builder-add-exam(string, int, string, string);
+    callback builder-remove-exam(int);
+    callback builder-build();
+    callback open-json-help();
+}
+
+export global SettingsData {
+    in-out property <string> display-name: "";
+    in-out property <string> accent: "#9B7BFF";
+    in-out property <int> accent-index: 0;
+    in-out property <int> theme-index: 0;
+    in-out property <[string]> theme-names: ["Charcoal", "Slate"];
+    in-out property <string> timezone: "Asia/Kolkata";
+    in-out property <string> goal-minutes: "300";
+    in-out property <string> sleep-target: "8.5";
+    in-out property <bool> sound: true;
+    in-out property <bool> notifications: true;
+    in-out property <bool> auto-revisions: true;
+    in-out property <int> import-mode: 0;
+    in-out property <string> intervals-text: "1, 3, 7";
+    in-out property <string> db-path: "";
+    in-out property <string> version: "";
+    in-out property <[PlanRowData]> plans: [];
+    in-out property <bool> reset-open: false;
+    in-out property <string> reset-text: "";
+    in-out property <[color]> accents: [#9B7BFF, #69D6A6, #EABF73, #7FB2E6, #E67F90, #C6A6FF];
+
+    callback save(string, int, int, string, string, string, bool, bool, bool, int, string);
+    callback backup();
+    callback restore();
+    callback open-wizard();
+    callback switch-plan(string);
+    callback archive-plan(string, bool);
+    callback delete-plan(string);
+    callback open-reset();
+    callback close-reset();
+    callback confirm-reset();
+    callback refresh-plans();
+}
+
+export global WizardData {
+    in-out property <bool> open: false;
+    in-out property <int> step: 0;
+    in-out property <[string]> step-names: ["Basics", "Syllabus", "Exams", "Schedule", "Review"];
+    in-out property <string> name: "";
+    in-out property <string> year: "";
+    in-out property <string> start: "";
+    in-out property <string> end: "";
+    in-out property <string> timezone: "Asia/Kolkata";
+    in-out property <[WizardSubjectRow]> subjects: [];
+    in-out property <int> subject-index: 0;
+    in-out property <[WizardChapterRow]> chapters: [];
+    in-out property <int> chapter-index: 0;
+    in-out property <string> new-subject: "";
+    in-out property <string> new-chapter: "";
+    in-out property <string> subject-name: "";
+    in-out property <string> chapter-title: "";
+    in-out property <string> selected-subject-name: "";
+    in-out property <[string]> subject-names: [];
+    in-out property <[WizardExamRow]> exams: [];
+    in-out property <int> exam-subject: 0;
+    in-out property <string> exam-label: "";
+    in-out property <string> exam-date: "";
+    in-out property <string> exam-time: "13:30";
+    in-out property <string> exam-session: "Afternoon";
+    in-out property <[WizardSlotRow]> slots: [];
+    in-out property <int> template-index: 0;
+    in-out property <[string]> template-names: [];
+    in-out property <string> slot-title: "";
+    in-out property <string> slot-start: "";
+    in-out property <string> slot-end: "";
+    in-out property <int> slot-kind: 0;
+    in-out property <int> slot-subject: 0;
+    in-out property <string> editing-slot: "";
+    in-out property <bool> generate-tasks: true;
+    in-out property <[string]> errors: [];
+    in-out property <string> summary: "";
+    in-out property <string> subject-error: "";
+    in-out property <string> exam-error: "";
+    in-out property <string> schedule-error: "";
+
+    callback open-wizard();
+    callback close-wizard();
+    callback next();
+    callback back();
+    callback cancel();
+    callback create();
+    callback select-subject(int);
+    callback add-subject(string);
+    callback remove-subject(int);
+    callback rename-subject(string);
+    callback add-chapter(string);
+    callback remove-chapter(int);
+    callback select-chapter(int);
+    callback rename-chapter(string);
+    callback add-exam(string, int, string, string, string);
+    callback remove-exam(int);
+    callback set-template(int);
+    callback add-slot(string, string, string, int, int);
+    callback edit-slot(int);
+    callback save-slot(string, string, string, int, int);
+    callback remove-slot(int);
+    callback set-generate-tasks(bool);
+    callback refresh-review();
+}

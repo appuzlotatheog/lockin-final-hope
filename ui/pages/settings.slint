@@ -1,0 +1,166 @@
+// Settings: preferences, accent, plans, backups and destructive actions.
+
+import { Palette, Metrics } from "../theme.slint";
+import {
+    AppButton, Card, Divider, Pill, SectionTitle, Field, LabeledCombo, Modal, Toggle
+} from "../components.slint";
+import { SettingsData } from "../state.slint";
+import { ScrollView } from "std-widgets.slint";
+
+export component SettingsPage inherits Rectangle {
+    background: transparent;
+
+    ScrollView {
+        width: parent.width;
+        height: parent.height;
+        content-width: self.width;
+
+        VerticalLayout {
+            padding: Metrics.page-pad;
+            spacing: 14px;
+
+            HorizontalLayout {
+                SectionTitle {
+                    title: "Settings";
+                    subtitle: "Stored locally in SQLite. No account, no telemetry.";
+                    horizontal-stretch: 1; }
+                AppButton { text: "New plan wizard"; kind: 1; button-width: 118px; clicked => { SettingsData.open-wizard(); } }
+                AppButton { text: "Back up now"; kind: 1; button-width: 96px; clicked => { SettingsData.backup(); } }
+                AppButton { text: "Save changes"; kind: 0; button-width: 106px; clicked => { SettingsData.save(SettingsData.display-name, SettingsData.accent-index, SettingsData.theme-index, SettingsData.timezone, SettingsData.goal-minutes, SettingsData.sleep-target, SettingsData.sound, SettingsData.notifications, SettingsData.auto-revisions, SettingsData.import-mode, SettingsData.intervals-text); } }
+            }
+
+            HorizontalLayout {
+                spacing: 14px;
+
+                VerticalLayout {
+                    horizontal-stretch: 1;
+                    spacing: 14px;
+                    Card {
+                        VerticalLayout {
+                            padding: 16px;
+                            spacing: 10px;
+                            SectionTitle { title: "Profile & appearance"; subtitle: "The name is used in the greeting only."; }
+                            Field { label: "Display name"; text <=> SettingsData.display-name; placeholder: "Your name"; }
+                            HorizontalLayout {
+                                spacing: 8px;
+                                for swatch[i] in SettingsData.accents: Rectangle {
+                                    width: 26px; height: 26px; border-radius: 13px;
+                                    background: swatch;
+                                    border-width: SettingsData.accent-index == i ? 2px : 0px;
+                                    border-color: Palette.text;
+                                    TouchArea { clicked => { SettingsData.accent-index = i; Palette.accent = swatch; } mouse-cursor: pointer; }
+                                }
+                            }
+                            LabeledCombo {
+                                label: "Theme"; model: SettingsData.theme-names;
+                                current-index: SettingsData.theme-index;
+                                selected(index) => { SettingsData.theme-index = index; }
+                            }
+                        }
+                    }
+
+                    Card {
+                        VerticalLayout {
+                            padding: 16px;
+                            spacing: 10px;
+                            SectionTitle { title: "Study defaults"; subtitle: "Applied to new sessions and dashboard progress."; }
+                            HorizontalLayout {
+                                spacing: 10px;
+                                Field { label: "Daily focus goal (min)"; text <=> SettingsData.goal-minutes; input-type: number; horizontal-stretch: 1; }
+                                Field { label: "Sleep target (h)"; text <=> SettingsData.sleep-target; input-type: decimal; horizontal-stretch: 1; }
+                            }
+                            Field { label: "Timezone"; text <=> SettingsData.timezone; placeholder: "Asia/Kolkata"; }
+                            Field { label: "Revision intervals (days)"; text <=> SettingsData.intervals-text; placeholder: "1, 3, 7"; }
+                            Toggle { label: "Auto-generate revisions when a task completes"; checked: SettingsData.auto-revisions; toggled(v) => { SettingsData.auto-revisions = v; } }
+                            Toggle { label: "Session chimes"; checked: SettingsData.sound; toggled(v) => { SettingsData.sound = v; } }
+                            Toggle { label: "Local notifications for reviews and exams"; checked: SettingsData.notifications; toggled(v) => { SettingsData.notifications = v; } }
+                            LabeledCombo {
+                                label: "Default import mode"; model: ["Merge (recommended)", "Replace"];
+                                current-index: SettingsData.import-mode;
+                                selected(index) => { SettingsData.import-mode = index; }
+                            }
+                        }
+                    }
+                }
+
+                VerticalLayout {
+                    min-width: 350px;
+                    max-width: 380px;
+                    spacing: 14px;
+                    Card {
+                        VerticalLayout {
+                            padding: 16px;
+                            spacing: 8px;
+                            SectionTitle { title: "Plans"; subtitle: "Only non-archived plans appear in the top switcher."; }
+                            for plan[i] in SettingsData.plans: VerticalLayout {
+                                spacing: 2px;
+                                height: plan.current ? 58px : 54px;
+                                HorizontalLayout {
+                                    spacing: 6px;
+                                    VerticalLayout {
+                                        horizontal-stretch: 1; spacing: 1px; alignment: center;
+                                        Text { text: plan.name; color: Palette.text; font-size: 11.5px; font-weight: 600; overflow: elide; }
+                                        Text { text: plan.span + (plan.archived ? " · archived" : ""); color: Palette.muted; font-size: 9.5px; }
+                                    }
+                                    Pill { text: plan.current ? "current" : plan.archived ? "archived" : "open"; tone: plan.current ? 2 : plan.archived ? 0 : 1; }
+                                }
+                                HorizontalLayout {
+                                    spacing: 5px;
+                                    AppButton { text: plan.current ? "Active" : "Switch"; kind: plan.current ? 2 : 1; button-width: 56px; button-height: 24px; clicked => { SettingsData.switch-plan(plan.id); } }
+                                    AppButton { text: plan.archived ? "Unarchive" : "Archive"; kind: 2; button-width: 66px; button-height: 24px; clicked => { SettingsData.archive-plan(plan.id, !plan.archived); } }
+                                    AppButton { text: "Delete"; kind: 3; button-width: 54px; button-height: 24px; clicked => { SettingsData.delete-plan(plan.id); } }
+                                }
+                            }
+                        }
+                    }
+
+                    Card {
+                        VerticalLayout {
+                            padding: 16px;
+                            spacing: 8px;
+                            SectionTitle { title: "Data"; subtitle: SettingsData.db-path; }
+                            HorizontalLayout {
+                                spacing: 8px;
+                                AppButton { text: "Backup"; kind: 1; stretch: true; button-height: 30px; clicked => { SettingsData.backup(); } }
+                                AppButton { text: "Restore backup"; kind: 1; stretch: true; button-height: 30px; clicked => { SettingsData.restore(); } }
+                            }
+                            Text { text: "Backups are full database snapshots. Restore validates the snapshot before replacing local data; history is preserved."; color: Palette.muted; font-size: 10px; wrap: word-wrap; }
+                        }
+                    }
+
+                    Card {
+                        VerticalLayout {
+                            padding: 16px;
+                            spacing: 8px;
+                            SectionTitle { title: "About"; }
+                            Text { text: "lockin-final-hope " + SettingsData.version; color: Palette.text; font-size: 11px; font-weight: 600; }
+                            Text { text: "Native Rust + Slint. Local SQLite only. No web view, login, cloud sync, telemetry or AI calls."; color: Palette.muted; font-size: 10px; wrap: word-wrap; }
+                            Text { text: "Keyboard: Tab moves between controls; Space/Enter activates buttons, toggles and selections."; color: Palette.muted; font-size: 10px; wrap: word-wrap; }
+                            AppButton { text: "Reset all data…"; kind: 3; button-width: 108px; button-height: 28px; clicked => { SettingsData.open-reset(); } }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    Modal {
+        open: SettingsData.reset-open;
+        title: "Reset all local data";
+        subtitle: "This deletes plans, tasks, sessions, revisions, mocks, mistakes and sleep entries from this device.";
+        dialog-width: 500px;
+        dialog-height: 320px;
+        close => { SettingsData.close-reset(); }
+        VerticalLayout {
+            spacing: 10px;
+            Text { text: "Export a backup or plan JSON first if you might need this data. This cannot be undone."; color: Palette.warning; font-size: 11.5px; wrap: word-wrap; }
+            Field { label: "Type RESET to confirm"; text <=> SettingsData.reset-text; placeholder: "RESET"; }
+            Rectangle { vertical-stretch: 1; }
+            HorizontalLayout {
+                spacing: 8px;
+                AppButton { text: "Cancel"; kind: 1; stretch: true; clicked => { SettingsData.close-reset(); } }
+                AppButton { text: "Delete everything"; kind: 3; stretch: true; clicked => { SettingsData.confirm-reset(); } }
+            }
+        }
+    }
+}

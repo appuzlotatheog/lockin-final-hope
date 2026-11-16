@@ -1,0 +1,227 @@
+// Lockin — native Slint desktop shell.
+// Design tokens live in ui/theme.slint; pages in ui/pages/*.slint.
+
+import { Palette, Metrics } from "theme.slint";
+import {
+    Shell, OverviewData, TimetableData, SyllabusData, FocusData, RevisionData,
+    ExamsData, AnalyticsData, IoData, SettingsData, WizardData
+} from "state.slint";
+
+export {
+    Shell, OverviewData, TimetableData, SyllabusData, FocusData, RevisionData,
+    ExamsData, AnalyticsData, IoData, SettingsData, WizardData
+}
+export { Palette }
+import { NavButton, ToastBox, AppButton, Dot } from "components.slint";
+import { ComboBox } from "std-widgets.slint";
+import { OverviewPage } from "pages/overview.slint";
+import { TimetablePage } from "pages/timetable.slint";
+import { SyllabusPage } from "pages/syllabus.slint";
+import { FocusPage } from "pages/focus.slint";
+import { RevisionPage } from "pages/revision.slint";
+import { ExamsPage } from "pages/exams.slint";
+import { AnalyticsPage } from "pages/analytics.slint";
+import { IoPage } from "pages/io.slint";
+import { SettingsPage } from "pages/settings.slint";
+import { WizardOverlay } from "pages/wizard.slint";
+
+export component AppWindow inherits Window {
+    title: "Lockin — study OS";
+    preferred-width: 1440px;
+    preferred-height: 900px;
+    min-width: 1080px;
+    min-height: 700px;
+    background: Palette.bg;
+    default-font-family: Palette.sans;
+
+    HorizontalLayout {
+        // ── Sidebar ────────────────────────────────────────────────
+        Rectangle {
+            width: 228px;
+            background: Palette.sidebar;
+
+            Rectangle {
+                x: parent.width - 1px; y: 0; width: 1px; height: parent.height;
+                background: Palette.border;
+            }
+            VerticalLayout {
+                padding-top: 22px;
+                padding-bottom: 16px;
+                spacing: 4px;
+
+                VerticalLayout {
+                    padding-left: 18px;
+                    padding-right: 18px;
+                    spacing: 1px;
+                    Text {
+                        text: "LOCKIN";
+                        color: Palette.text;
+                        font-size: 19px;
+                        font-weight: 800;
+                        letter-spacing: 3px;
+                    }
+                    Text {
+                        text: "STUDY OS · LOCAL FIRST";
+                        color: Palette.muted;
+                        font-size: 8.5px;
+                        font-weight: 600;
+                        letter-spacing: 1.2px;
+                    }
+                }
+
+                Rectangle { height: 16px; }
+
+                VerticalLayout {
+                    padding-left: 18px;
+                    padding-right: 18px;
+                    spacing: 3px;
+                    Text { text: "ACTIVE PLAN"; color: Palette.muted; font-size: 8.5px; font-weight: 700; letter-spacing: 1px; }
+                    Text { text: Shell.plan-name; color: Palette.text; font-size: 11.5px; font-weight: 600; wrap: word-wrap; }
+                    Text { text: Shell.plan-span; color: Palette.muted; font-size: 9.5px; }
+                }
+
+                Rectangle { height: 14px; }
+
+                for label[i] in Shell.nav-labels: NavButton {
+                    label: label;
+                    active: Shell.current-page == i;
+                    badge: i == 4 ? Shell.revision-badge : 0;
+                    clicked => { Shell.navigate(i); }
+                }
+
+                Rectangle { vertical-stretch: 1; }
+
+                Rectangle {
+                    height: 1px;
+                    background: Palette.border;
+                }
+                VerticalLayout {
+                    padding-top: 16px;
+                    padding-bottom: 16px;
+                    padding-left: 18px;
+                    padding-right: 18px;
+                    spacing: 5px;
+                    HorizontalLayout {
+                        spacing: 6px;
+                        Dot { dot-color: Palette.success; width: 6px; height: 6px; border-radius: 3px; }
+                        Text { text: Shell.status-text; color: Palette.muted; font-size: 9.5px; vertical-alignment: center; }
+                    }
+                    Text { text: "lockin-final-hope v" + Shell.version; color: Palette.muted; font-size: 9px; opacity: 0.75; }
+                }
+            }
+        }
+
+        // ── Main column ────────────────────────────────────────────
+        Rectangle {
+            background: Palette.bg;
+            horizontal-stretch: 1;
+
+            VerticalLayout {
+                spacing: 0px;
+
+                // Top bar
+                Rectangle {
+                    height: 62px;
+                    background: Palette.bg;
+
+                    Rectangle {
+                        x: 0; y: parent.height - 1px; width: parent.width; height: 1px;
+                        background: Palette.border;
+                    }
+                    HorizontalLayout {
+                        padding-left: 26px;
+                        padding-right: 22px;
+                        spacing: 12px;
+
+                        VerticalLayout {
+                            spacing: 1px;
+                            horizontal-stretch: 1;
+                            alignment: center;
+                            Text {
+                                text: Shell.page-title;
+                                color: Palette.text;
+                                font-size: 17px;
+                                font-weight: 700;
+                            }
+                            Text {
+                                text: Shell.page-context;
+                                color: Palette.muted;
+                                font-size: 10.5px;
+                                overflow: elide;
+                            }
+                        }
+
+                        if Shell.exam-mode: Rectangle {
+                            height: 24px;
+                            width: exam-label.preferred-width + 20px;
+                            border-radius: 12px;
+                            background: Palette.accent-soft;
+                            exam-label := Text {
+                                text: "EXAM MODE";
+                                color: Palette.accent;
+                                font-size: 9px;
+                                font-weight: 700;
+                                letter-spacing: 0.6px;
+                                horizontal-alignment: center;
+                                vertical-alignment: center;
+                            }
+                        }
+
+                        Text {
+                            text: Shell.today-text;
+                            color: Palette.muted;
+                            font-size: 10.5px;
+                            vertical-alignment: center;
+                        }
+
+                        plan-combo := ComboBox {
+                            model: Shell.plan-names;
+                            current-index <=> Shell.plan-index;
+                            min-width: 190px;
+                            max-width: 230px;
+                            selected => { Shell.plan-selected(plan-combo.current-index); }
+                        }
+
+                        AppButton {
+                            text: "New plan";
+                            kind: 1;
+                            button-width: 78px;
+                            button-height: 30px;
+                            clicked => { Shell.open-new-plan(); }
+                        }
+                    }
+                }
+
+                // Page area
+                Rectangle {
+                    vertical-stretch: 1;
+                    background: Palette.bg;
+                    clip: true;
+
+                    if Shell.current-page == 0: OverviewPage { }
+                    if Shell.current-page == 1: TimetablePage { }
+                    if Shell.current-page == 2: SyllabusPage { }
+                    if Shell.current-page == 3: FocusPage { }
+                    if Shell.current-page == 4: RevisionPage { }
+                    if Shell.current-page == 5: ExamsPage { }
+                    if Shell.current-page == 6: AnalyticsPage { }
+                    if Shell.current-page == 7: IoPage { }
+                    if Shell.current-page == 8: SettingsPage { }
+                }
+            }
+        }
+    }
+
+    Rectangle {
+        width: 100%;
+        height: 100%;
+        ToastBox {
+            open: Shell.toast-open;
+            text: Shell.toast-text;
+            tone: Shell.toast-tone;
+            x: parent.width - self.width - 24px;
+            y: parent.height - self.height - 40px;
+        }
+        WizardOverlay { }
+    }
+}

@@ -1,0 +1,225 @@
+// Exams: countdowns, paper readiness, mock tests and a mistake log.
+
+import { Palette, Metrics } from "../theme.slint";
+import {
+    AppButton, Card, Divider, Pill, ProgressBar, SectionTitle, EmptyState,
+    Field, LabeledCombo, Modal, TextArea, Toggle, StatTile
+} from "../components.slint";
+import { ExamsData } from "../state.slint";
+import { ScrollView } from "std-widgets.slint";
+
+export component ExamsPage inherits Rectangle {
+    background: transparent;
+
+    ScrollView {
+        width: parent.width;
+        height: parent.height;
+        content-width: self.width;
+
+        VerticalLayout {
+            padding: Metrics.page-pad;
+            spacing: 14px;
+
+            HorizontalLayout {
+                spacing: 8px;
+                SectionTitle { title: "Exams"; subtitle: "Dates, readiness and exam mode"; horizontal-stretch: 1; }
+                AppButton {
+                    text: ExamsData.exam-mode ? "Exam mode on" : "Exam mode off";
+                    kind: ExamsData.exam-mode ? 0 : 1;
+                    button-width: 122px;
+                    clicked => { ExamsData.set-exam-mode(!ExamsData.exam-mode); }
+                }
+                AppButton { text: "Add mock test"; kind: 1; button-width: 106px; clicked => { ExamsData.add-mock(); } }
+                AppButton { text: "Log mistake"; kind: 0; button-width: 96px; clicked => { ExamsData.add-mistake(); } }
+            }
+
+            if ExamsData.next-paper != "": Rectangle {
+                height: 66px;
+                border-radius: Metrics.radius;
+                background: Palette.accent-soft;
+                border-width: 1px;
+                border-color: Palette.accent.transparentize(0.55);
+                HorizontalLayout {
+                    padding-left: 18px; padding-right: 12px;
+                    spacing: 14px;
+                    VerticalLayout {
+                        spacing: 2px; horizontal-stretch: 1; alignment: center;
+                        Text { text: "NEXT PAPER"; color: Palette.accent; font-size: 9px; font-weight: 700; letter-spacing: 1px; }
+                        Text { text: ExamsData.next-paper; color: Palette.text; font-size: 15px; font-weight: 700; }
+                        Text { text: ExamsData.next-paper-when; color: Palette.muted; font-size: 10.5px; }
+                    }
+                    AppButton { text: "Study this paper"; kind: 0; button-width: 124px; clicked => { ExamsData.study-paper(ExamsData.next-paper-subject-id); } }
+                }
+            }
+
+            HorizontalLayout {
+                spacing: 12px;
+                for exam[i] in ExamsData.exams: Card {
+                    horizontal-stretch: 1;
+                    min-width: 180px;
+                    VerticalLayout {
+                        padding: 14px;
+                        spacing: 5px;
+                        HorizontalLayout {
+                            spacing: 6px;
+                            Rectangle { width: 8px; height: 8px; border-radius: 4px; background: exam.tint; }
+                            Text { text: exam.subject; color: Palette.muted; font-size: 10px; font-weight: 600; horizontal-stretch: 1; overflow: elide; }
+                            Pill { text: exam.countdown; tone: exam.is-past ? 0 : exam.days-left <= 3 ? 4 : exam.days-left <= 7 ? 3 : 1; }
+                        }
+                        Text { text: exam.label; color: Palette.text; font-size: 13px; font-weight: 700; wrap: word-wrap; }
+                        Text { text: exam.date-text + " · " + exam.time-text + " · " + exam.session; color: Palette.muted; font-size: 10px; }
+                        ProgressBar { value: exam.progress; bar-color: exam.progress >= 80 ? Palette.success : exam.progress >= 40 ? Palette.warning : Palette.danger; }
+                        Text { text: exam.chapters-ready + " / " + exam.chapters-total + " chapters exam ready"; color: Palette.muted; font-size: 9.5px; }
+                        AppButton { text: "Study weak chapters"; kind: 2; stretch: true; button-height: 26px; clicked => { ExamsData.study-paper(exam.subject-id); } }
+                    }
+                }
+            }
+
+            HorizontalLayout {
+                spacing: 14px;
+
+                Card {
+                    horizontal-stretch: 3;
+                    VerticalLayout {
+                        padding: 14px;
+                        spacing: 6px;
+                        HorizontalLayout {
+                            SectionTitle { title: "Mock tests"; subtitle: ExamsData.mock-count + " papers logged · average " + ExamsData.mock-avg; horizontal-stretch: 1; }
+                        }
+                        Divider { }
+                        if ExamsData.mocks.length == 0: VerticalLayout {
+                            padding-top: 22px; padding-bottom: 22px;
+                            EmptyState { title: "No mock tests yet"; body: "Log a paper with its real marks and duration. The weak topics feed your next planning decision."; }
+                        }
+                        for mock[i] in ExamsData.mocks: HorizontalLayout {
+                            height: 46px;
+                            spacing: 8px;
+                            VerticalLayout {
+                                horizontal-stretch: 1; spacing: 1px; alignment: center;
+                                Text { text: mock.name; color: Palette.text; font-size: 11.5px; font-weight: 600; overflow: elide; }
+                                Text { text: mock.subject + " · " + mock.date + " · " + mock.duration + (mock.weak != "" ? " · weak: " + mock.weak : ""); color: Palette.muted; font-size: 9.5px; overflow: elide; }
+                            }
+                            Pill { text: mock.score + " · " + mock.percent + "%"; tone: mock.percent >= 75 ? 2 : mock.percent >= 50 ? 3 : 4; }
+                            AppButton { text: "×"; kind: 2; button-width: 26px; button-height: 26px; clicked => { ExamsData.delete-mock(mock.id); } }
+                        }
+                    }
+                }
+
+                Card {
+                    horizontal-stretch: 2;
+                    VerticalLayout {
+                        padding: 14px;
+                        spacing: 6px;
+                        SectionTitle { title: "Mistake log"; subtitle: ExamsData.open-mistakes + " open · resolve only when you can explain the fix"; }
+                        Divider { }
+                        if ExamsData.mistakes.length == 0: Text {
+                            text: "No mistakes logged. Add errors from mocks or practice so they can be revised.";
+                            color: Palette.muted; font-size: 11px; wrap: word-wrap;
+                        }
+                        for m[i] in ExamsData.mistakes: VerticalLayout {
+                            spacing: 3px;
+                            Rectangle {
+                                height: m.resolved ? 26px : 46px;
+                                HorizontalLayout {
+                                    spacing: 6px;
+                                    Toggle {
+                                        label: "";
+                                        checked: m.resolved;
+                                        toggled(v) => { ExamsData.toggle-mistake(m.id, v); }
+                                        width: 38px;
+                                    }
+                                    VerticalLayout {
+                                        horizontal-stretch: 1; spacing: 0px; alignment: center;
+                                        Text { text: m.question; color: m.resolved ? Palette.muted : Palette.text; font-size: 10.5px; overflow: elide; }
+                                        if !m.resolved: Text { text: m.subject + " · " + m.chapter; color: Palette.muted; font-size: 9px; }
+                                    }
+                                }
+                            }
+                            if !m.resolved: Text { text: m.explanation; color: Palette.muted; font-size: 9.5px; wrap: word-wrap; }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    Modal {
+        open: ExamsData.mock-open;
+        title: "Log mock test";
+        subtitle: "Marks are stored as reported — no estimates.";
+        dialog-width: 560px;
+        dialog-height: 540px;
+        close => { ExamsData.close-mock(); }
+        VerticalLayout {
+            spacing: 10px;
+            Field { label: "Paper name"; text <=> ExamsData.mock-name; placeholder: "Physics model exam 1"; }
+            HorizontalLayout {
+                spacing: 10px;
+                LabeledCombo {
+                    label: "Subject"; model: ExamsData.subject-names;
+                    current-index: ExamsData.mock-subject;
+                    selected(index) => { ExamsData.mock-subject = index; }
+                    horizontal-stretch: 1;
+                }
+                Field { label: "Date"; text <=> ExamsData.mock-date; placeholder: "2026-12-02"; horizontal-stretch: 1; }
+            }
+            HorizontalLayout {
+                spacing: 10px;
+                Field { label: "Score"; text <=> ExamsData.mock-score; input-type: number; horizontal-stretch: 1; }
+                Field { label: "Max marks"; text <=> ExamsData.mock-max; input-type: number; horizontal-stretch: 1; }
+                Field { label: "Minutes"; text <=> ExamsData.mock-duration; input-type: number; horizontal-stretch: 1; }
+            }
+            Field { label: "Weak topics"; text <=> ExamsData.mock-weak; placeholder: "Rotational motion, error analysis"; }
+            TextArea { text <=> ExamsData.mock-notes; placeholder: "What went wrong, what to change next time…"; area-height: 90px; family: Palette.sans; }
+            if ExamsData.mock-error != "": Text { text: ExamsData.mock-error; color: Palette.danger; font-size: 11px; }
+            Rectangle { vertical-stretch: 1; }
+            HorizontalLayout {
+                spacing: 8px;
+                AppButton { text: "Cancel"; kind: 1; stretch: true; clicked => { ExamsData.close-mock(); } }
+                AppButton {
+                    text: "Save mock"; kind: 0; stretch: true;
+                    clicked => { ExamsData.save-mock(ExamsData.mock-name, ExamsData.mock-subject, ExamsData.mock-date, ExamsData.mock-score, ExamsData.mock-max, ExamsData.mock-duration, ExamsData.mock-weak, ExamsData.mock-notes); }
+                }
+            }
+        }
+    }
+
+    Modal {
+        open: ExamsData.mistake-open;
+        title: "Log mistake";
+        subtitle: "Each mistake is linked to a subject and, when possible, a chapter.";
+        dialog-width: 540px;
+        dialog-height: 440px;
+        close => { ExamsData.close-mistake(); }
+        VerticalLayout {
+            spacing: 10px;
+            HorizontalLayout {
+                spacing: 10px;
+                LabeledCombo {
+                    label: "Subject"; model: ExamsData.subject-names;
+                    current-index: ExamsData.mistake-subject;
+                    selected(index) => { ExamsData.mistake-subject = index; ExamsData.mistake-subject-changed(index); }
+                    horizontal-stretch: 1;
+                }
+                LabeledCombo {
+                    label: "Chapter"; model: ExamsData.chapter-names;
+                    current-index: ExamsData.mistake-chapter;
+                    selected(index) => { ExamsData.mistake-chapter = index; }
+                    horizontal-stretch: 1;
+                }
+            }
+            Field { label: "Question / trap"; text <=> ExamsData.mistake-question; placeholder: "Sign convention in lens formula"; }
+            TextArea { text <=> ExamsData.mistake-explanation; placeholder: "Why it happened and the correct approach…"; area-height: 110px; family: Palette.sans; }
+            if ExamsData.mistake-error != "": Text { text: ExamsData.mistake-error; color: Palette.danger; font-size: 11px; }
+            Rectangle { vertical-stretch: 1; }
+            HorizontalLayout {
+                spacing: 8px;
+                AppButton { text: "Cancel"; kind: 1; stretch: true; clicked => { ExamsData.close-mistake(); } }
+                AppButton {
+                    text: "Save mistake"; kind: 0; stretch: true;
+                    clicked => { ExamsData.save-mistake(ExamsData.mistake-subject, ExamsData.mistake-chapter, ExamsData.mistake-question, ExamsData.mistake-explanation); }
+                }
+            }
+        }
+    }
+}

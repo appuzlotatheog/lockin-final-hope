@@ -1,0 +1,29 @@
+// Design tokens. Colours marked in-out can be re-themed from Rust (Settings).
+export global Palette {
+    in-out property <color> bg: #0e0d13;
+    in-out property <color> sidebar: #14121b;
+    in-out property <color> surface: #1b1826;
+    in-out property <color> elevated: #231f31;
+    in-out property <color> border: #312a40;
+    in-out property <color> text: #f5f2fa;
+    in-out property <color> muted: #aaa3b7;
+    in-out property <color> accent: #9b7bff;
+
+    out property <color> success: #69d6a6;
+    out property <color> warning: #eabf73;
+    out property <color> danger: #e67f90;
+    out property <color> accent-soft: accent.transparentize(0.84);
+    out property <color> success-soft: #69d6a630;
+    out property <color> warning-soft: #eabf7330;
+    out property <color> danger-soft: #e67f9030;
+
+    out property <string> sans: "Noto Sans";
+    out property <string> mono: "Noto Sans Mono";
+}
+
+export global Metrics {
+    out property <length> radius: 14px;
+    out property <length> radius-sm: 9px;
+    out property <length> gap: 16px;
+    out property <length> page-pad: 26px;
+}

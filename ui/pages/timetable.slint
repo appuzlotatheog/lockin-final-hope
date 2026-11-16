@@ -1,0 +1,327 @@
+// Timetable: day agenda, editable week grid, task editor, templates, replan.
+
+import { Palette, Metrics } from "../theme.slint";
+import {
+    AppButton, Card, Divider, Pill, SectionTitle, EmptyState, AgendaRow,
+    Field, LabeledCombo, Modal
+} from "../components.slint";
+import { TimetableData, Shell } from "../state.slint";
+import { ScrollView } from "std-widgets.slint";
+
+export component TimetablePage inherits Rectangle {
+    background: transparent;
+
+    ScrollView {
+        width: parent.width;
+        height: parent.height;
+        content-width: self.width;
+
+        VerticalLayout {
+            padding: Metrics.page-pad;
+            spacing: 14px;
+
+            HorizontalLayout {
+                spacing: 8px;
+                AppButton { text: "‹"; kind: 1; button-width: 34px; clicked => { TimetableData.shift-day(-1); } }
+                AppButton { text: "Today"; kind: 1; button-width: 64px; clicked => { TimetableData.go-today(); } }
+                AppButton { text: "›"; kind: 1; button-width: 34px; clicked => { TimetableData.shift-day(1); } }
+                VerticalLayout {
+                    spacing: 1px;
+                    horizontal-stretch: 1;
+                    Text { text: TimetableData.date-label; color: Palette.text; font-size: 18px; font-weight: 700; }
+                    Text { text: TimetableData.weekday-label + " · " + TimetableData.day-type-label + " · " + TimetableData.day-summary; color: Palette.muted; font-size: 10.5px; }
+                }
+                AppButton { text: "Week"; kind: TimetableData.view-mode == 1 ? 0 : 1; button-width: 56px; clicked => { TimetableData.set-view(1); } }
+                AppButton { text: "Day"; kind: TimetableData.view-mode == 0 ? 0 : 1; button-width: 50px; clicked => { TimetableData.set-view(0); } }
+                AppButton { text: "Replan"; kind: 1; button-width: 70px; clicked => { TimetableData.open-replan(); } }
+                AppButton { text: "Add task"; kind: 0; button-width: 84px; clicked => { TimetableData.open-new-task(); } }
+            }
+
+            HorizontalLayout {
+                spacing: 10px;
+                LabeledCombo {
+                    label: "Day type";
+                    model: ["Template default", "Weekday", "Saturday", "Sunday", "Holiday"];
+                    current-index: TimetableData.day-type-index;
+                    selected(index) => { TimetableData.set-day-type(index); }
+                    min-width: 170px;
+                }
+                if TimetableData.is-custom-day: AppButton {
+                    text: "Clear override"; kind: 2; button-width: 98px; button-height: 30px;
+                    clicked => { TimetableData.clear-day-type(); }
+                }
+                Rectangle { horizontal-stretch: 1; }
+                Pill { text: TimetableData.day-planned + "m planned"; tone: 5; }
+                Pill { text: TimetableData.day-focused + "m focused"; tone: 1; }
+            }
+
+            // ── Day view ────────────────────────────────────────────
+            if TimetableData.view-mode == 0: VerticalLayout {
+                spacing: 14px;
+                Card {
+                    VerticalLayout {
+                        padding: 14px;
+                        spacing: 4px;
+                        HorizontalLayout {
+                            SectionTitle { title: "Day agenda"; subtitle: "Click a row to edit · fixed breaks stay put when replanning"; horizontal-stretch: 1; }
+                            AppButton { text: "Backlog"; kind: 2; button-width: 70px; button-height: 28px; clicked => { TimetableData.toggle-backlog(); } }
+                        }
+                        Divider { }
+                        if TimetableData.rows.length == 0: VerticalLayout {
+                            padding-top: 22px; padding-bottom: 22px;
+                            EmptyState {
+                                title: "No tasks on this date";
+                                body: "Add a task, apply a template, or open the week view to see the plan around this day.";
+                            }
+                            HorizontalLayout {
+                                alignment: center;
+                                AppButton { text: "Add a task"; kind: 0; button-width: 90px; clicked => { TimetableData.open-new-task(); } }
+                            }
+                        }
+                        for item[i] in TimetableData.rows: AgendaRow {
+                            item: item;
+                            overdue: item.date < TimetableData.selected-date && item.status-index != 2;
+                            start => { if (!item.is-fixed && !item.is-break) { TimetableData.start-task(item.id); } }
+                            complete => { TimetableData.set-task-status(item.id, 2); }
+                            reopen => { TimetableData.set-task-status(item.id, 0); }
+                            skip => { TimetableData.set-task-status(item.id, 4); }
+                            move => { TimetableData.move-backlog-today(item.id); }
+                            edit => { if (!item.is-fixed && !item.is-break) { TimetableData.open-edit-task(item.id); } }
+                        }
+                    }
+                }
+
+                if TimetableData.backlog-open: Card {
+                    VerticalLayout {
+                        padding: 14px;
+                        spacing: 6px;
+                        SectionTitle { title: "Backlog"; subtitle: "Unfinished work from earlier days. Moving keeps history and marks the new date."; }
+                        Divider { }
+                        if TimetableData.backlog.length == 0: Text {
+                            text: "Nothing in the backlog.";
+                            color: Palette.muted; font-size: 11.5px;
+                        }
+                        for b[i] in TimetableData.backlog: HorizontalLayout {
+                            height: 36px;
+                            spacing: 8px;
+                            Text { text: b.date; color: Palette.muted; font-size: 10px; width: 74px; vertical-alignment: center; }
+                            VerticalLayout {
+                                horizontal-stretch: 1; spacing: 0px; alignment: center;
+                                Text { text: b.title; color: Palette.text; font-size: 11.5px; overflow: elide; }
+                                Text { text: b.subject + " · " + b.kind; color: Palette.muted; font-size: 9.5px; }
+                            }
+                            AppButton { text: "Move to today"; kind: 1; button-width: 96px; button-height: 26px; clicked => { TimetableData.move-backlog-today(b.id); } }
+                        }
+                    }
+                }
+            }
+
+            // ── Week view ───────────────────────────────────────────
+            if TimetableData.view-mode == 1: Card {
+                VerticalLayout {
+                    padding: 12px;
+                    spacing: 6px;
+                    HorizontalLayout {
+                        SectionTitle { title: "Week grid"; subtitle: "Compact view; click a weekday header to open that day"; horizontal-stretch: 1; }
+                    }
+                    Divider { }
+                    HorizontalLayout {
+                        spacing: 5px;
+                        for day[j] in TimetableData.week-days: VerticalLayout {
+                            horizontal-stretch: 1;
+                            min-width: 92px;
+                            spacing: 3px;
+                            Rectangle {
+                                height: 44px;
+                                border-radius: 7px;
+                                background: day.is-today ? Palette.accent-soft : Palette.elevated;
+                                Text { text: day.weekday; color: day.is-today ? Palette.accent : Palette.muted; font-size: 9px; font-weight: 700; horizontal-alignment: center; y: 5px; width: parent.width; }
+                                Text { text: day.date; color: Palette.text; font-size: 10px; font-weight: 600; horizontal-alignment: center; y: 20px; width: parent.width; }
+                                TouchArea { clicked => { TimetableData.open-day(day.date); } mouse-cursor: pointer; }
+                            }
+                            if day.task-count == 0: Text {
+                                text: "—"; color: Palette.muted; font-size: 9px; height: 30px;
+                                horizontal-alignment: center; vertical-alignment: center;
+                            }
+                            if j == 0: VerticalLayout { spacing: 0px; for it[i] in TimetableData.week-mon: AgendaRow { item: it; compact: true; start => { } complete => { } reopen => { } skip => { } move => { } edit => { TimetableData.open-day(it.date); } } }
+                            if j == 1: VerticalLayout { spacing: 0px; for it[i] in TimetableData.week-tue: AgendaRow { item: it; compact: true; start => { } complete => { } reopen => { } skip => { } move => { } edit => { TimetableData.open-day(it.date); } } }
+                            if j == 2: VerticalLayout { spacing: 0px; for it[i] in TimetableData.week-wed: AgendaRow { item: it; compact: true; start => { } complete => { } reopen => { } skip => { } move => { } edit => { TimetableData.open-day(it.date); } } }
+                            if j == 3: VerticalLayout { spacing: 0px; for it[i] in TimetableData.week-thu: AgendaRow { item: it; compact: true; start => { } complete => { } reopen => { } skip => { } move => { } edit => { TimetableData.open-day(it.date); } } }
+                            if j == 4: VerticalLayout { spacing: 0px; for it[i] in TimetableData.week-fri: AgendaRow { item: it; compact: true; start => { } complete => { } reopen => { } skip => { } move => { } edit => { TimetableData.open-day(it.date); } } }
+                            if j == 5: VerticalLayout { spacing: 0px; for it[i] in TimetableData.week-sat: AgendaRow { item: it; compact: true; start => { } complete => { } reopen => { } skip => { } move => { } edit => { TimetableData.open-day(it.date); } } }
+                            if j == 6: VerticalLayout { spacing: 0px; for it[i] in TimetableData.week-sun: AgendaRow { item: it; compact: true; start => { } complete => { } reopen => { } skip => { } move => { } edit => { TimetableData.open-day(it.date); } } }
+                        }
+                    }
+                }
+            }
+
+            // ── Templates ───────────────────────────────────────────
+            Card {
+                VerticalLayout {
+                    padding: 14px;
+                    spacing: 8px;
+                    HorizontalLayout {
+                        SectionTitle {
+                            title: "Weekly templates";
+                            subtitle: "Fixed meals and breaks are materialised as non-task blocks. Editing a template never rewrites completed work.";
+                            horizontal-stretch: 1; }
+                        AppButton { text: TimetableData.template-open ? "Hide" : "Manage"; kind: 1; button-width: 70px; button-height: 30px; clicked => { TimetableData.open-template-panel(); } }
+                    }
+                    if TimetableData.template-open: VerticalLayout {
+                        spacing: 8px;
+                        HorizontalLayout {
+                            spacing: 6px;
+                            for tpl[i] in TimetableData.templates: AppButton {
+                                text: tpl.name;
+                                kind: TimetableData.template-index == i ? 0 : 1;
+                                button-width: tpl.name == "Weekday" ? 78px : 82px;
+                                button-height: 28px;
+                                clicked => { TimetableData.select-template(i); }
+                            }
+                        }
+                        Divider { }
+                        for slot[i] in TimetableData.template-slots: HorizontalLayout {
+                            height: 34px; spacing: 8px;
+                            Text { text: slot.start + " – " + slot.end; color: Palette.muted; font-size: 10px; font-family: Palette.mono; width: 96px; vertical-alignment: center; }
+                            Rectangle { width: 3px; height: 16px; border-radius: 2px; background: slot.tint; }
+                            Text { text: slot.title; color: Palette.text; font-size: 11.5px; horizontal-stretch: 1; vertical-alignment: center; }
+                            Pill { text: slot.kind; tone: 0; }
+                            AppButton { text: "Edit"; kind: 2; button-width: 44px; button-height: 24px; clicked => { TimetableData.edit-template-slot(slot.id); } }
+                            AppButton { text: "Delete"; kind: 3; button-width: 50px; button-height: 24px; clicked => { TimetableData.delete-template-slot(slot.id); } }
+                        }
+                        HorizontalLayout {
+                            spacing: 8px;
+                            AppButton { text: "Add slot"; kind: 1; button-width: 74px; button-height: 28px; clicked => { TimetableData.add-template-slot(); } }
+                            AppButton { text: "Apply template to this day"; kind: 2; button-width: 160px; button-height: 28px; clicked => { TimetableData.apply-template(); } }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // Task editor
+    Modal {
+        open: TimetableData.editor-open;
+        title: TimetableData.editor-id == "" ? "Add task" : "Edit task";
+        subtitle: "Times are local to the plan. Overlaps are checked against existing tasks.";
+        dialog-width: 600px;
+        dialog-height: 560px;
+        close => { TimetableData.close-editor(); }
+        VerticalLayout {
+            spacing: 10px;
+            Field { label: "Title"; text <=> TimetableData.editor-title; placeholder: "Physics · NCERT chapter 4 problems"; }
+            HorizontalLayout {
+                spacing: 10px;
+                Field { label: "Date"; text <=> TimetableData.editor-date; placeholder: "2026-11-16"; horizontal-stretch: 1; }
+                Field { label: "Start"; text <=> TimetableData.editor-start; placeholder: "16:00"; horizontal-stretch: 1; }
+                Field { label: "End"; text <=> TimetableData.editor-end; placeholder: "17:15"; horizontal-stretch: 1; }
+            }
+            HorizontalLayout {
+                spacing: 10px;
+                LabeledCombo {
+                    label: "Subject"; model: TimetableData.subject-names;
+                    current-index: TimetableData.editor-subject;
+                    selected(index) => { TimetableData.editor-subject = index; TimetableData.subject-changed(index); }
+                    horizontal-stretch: 1;
+                }
+                LabeledCombo {
+                    label: "Chapter"; model: TimetableData.chapter-names;
+                    current-index: TimetableData.editor-chapter;
+                    selected(index) => { TimetableData.editor-chapter = index; }
+                    horizontal-stretch: 1;
+                }
+            }
+            HorizontalLayout {
+                spacing: 10px;
+                LabeledCombo { label: "Type"; model: TimetableData.type-names; current-index: TimetableData.editor-type; selected(index) => { TimetableData.editor-type = index; } horizontal-stretch: 1; }
+                LabeledCombo { label: "Priority"; model: TimetableData.priority-names; current-index: TimetableData.editor-priority; selected(index) => { TimetableData.editor-priority = index; } horizontal-stretch: 1; }
+                LabeledCombo { label: "Status"; model: TimetableData.status-names; current-index: TimetableData.editor-status; selected(index) => { TimetableData.editor-status = index; } horizontal-stretch: 1; }
+            }
+            if TimetableData.editor-error != "": Text { text: TimetableData.editor-error; color: Palette.danger; font-size: 11px; wrap: word-wrap; }
+            Rectangle { vertical-stretch: 1; }
+            HorizontalLayout {
+                spacing: 8px;
+                if TimetableData.editor-id != "": AppButton { text: "Delete"; kind: 3; button-width: 78px; clicked => { TimetableData.delete-task(TimetableData.editor-id); } }
+                Rectangle { horizontal-stretch: 1; }
+                AppButton { text: "Cancel"; kind: 1; button-width: 82px; clicked => { TimetableData.close-editor(); } }
+                AppButton {
+                    text: TimetableData.editor-id == "" ? "Create task" : "Save task";
+                    kind: 0; button-width: 104px;
+                    clicked => { TimetableData.save-task(TimetableData.editor-id, TimetableData.editor-title, TimetableData.editor-date, TimetableData.editor-start, TimetableData.editor-end, TimetableData.editor-subject, TimetableData.editor-chapter, TimetableData.editor-type, TimetableData.editor-priority, TimetableData.editor-status); }
+                }
+            }
+        }
+    }
+
+    // Slot editor
+    Modal {
+        open: TimetableData.slot-open;
+        title: TimetableData.slot-id == "" ? "Add template slot" : "Edit template slot";
+        subtitle: "Fixed blocks (meals, sleep, school) appear in the day but are not tasks.";
+        dialog-width: 500px;
+        dialog-height: 410px;
+        close => { TimetableData.close-slot-editor(); }
+        VerticalLayout {
+            spacing: 10px;
+            Field { label: "Title"; text <=> TimetableData.slot-title; placeholder: "Lunch"; }
+            HorizontalLayout {
+                spacing: 10px;
+                Field { label: "Start"; text <=> TimetableData.slot-start; placeholder: "12:30"; horizontal-stretch: 1; }
+                Field { label: "End"; text <=> TimetableData.slot-end; placeholder: "13:15"; horizontal-stretch: 1; }
+            }
+            LabeledCombo {
+                label: "Kind";
+                model: ["Study block", "Break", "Meal", "Sleep", "School", "Travel"];
+                current-index: TimetableData.slot-kind;
+                selected(index) => { TimetableData.slot-kind = index; }
+            }
+            LabeledCombo {
+                label: "Subject (for study blocks)";
+                model: TimetableData.subject-names;
+                current-index: TimetableData.slot-subject;
+                selected(index) => { TimetableData.slot-subject = index; }
+            }
+            if TimetableData.slot-error != "": Text { text: TimetableData.slot-error; color: Palette.danger; font-size: 11px; wrap: word-wrap; }
+            Rectangle { vertical-stretch: 1; }
+            HorizontalLayout {
+                spacing: 8px;
+                AppButton { text: "Cancel"; kind: 1; stretch: true; clicked => { TimetableData.close-slot-editor(); } }
+                AppButton {
+                    text: "Save slot"; kind: 0; stretch: true;
+                    clicked => { TimetableData.save-template-slot(TimetableData.slot-id, TimetableData.slot-title, TimetableData.slot-start, TimetableData.slot-end, TimetableData.slot-kind, TimetableData.slot-subject); }
+                }
+            }
+        }
+    }
+
+    // Replan confirmation
+    Modal {
+        open: TimetableData.replan-open;
+        title: "Replan this day";
+        subtitle: "A proposal is computed first. Completed, partially completed and in-progress work is protected.";
+        dialog-width: 540px;
+        dialog-height: 400px;
+        close => { TimetableData.close-replan(); }
+        VerticalLayout {
+            spacing: 10px;
+            Text { text: TimetableData.replan-summary; color: Palette.text; font-size: 12px; wrap: word-wrap; }
+            HorizontalLayout {
+                spacing: 8px;
+                Pill { text: TimetableData.replan-added + " to add"; tone: 2; }
+                Pill { text: TimetableData.replan-moved + " to move"; tone: 3; }
+                Pill { text: TimetableData.replan-protected + " protected"; tone: 5; }
+            }
+            if TimetableData.replan-has-work: Text {
+                text: "Existing unfinished tasks in this day will be kept and shifted rather than deleted. Nothing is applied until you confirm.";
+                color: Palette.muted; font-size: 11px; wrap: word-wrap;
+            }
+            Rectangle { vertical-stretch: 1; }
+            HorizontalLayout {
+                spacing: 8px;
+                AppButton { text: "Cancel"; kind: 1; stretch: true; clicked => { TimetableData.close-replan(); } }
+                AppButton { text: "Apply proposal"; kind: 0; stretch: true; clicked => { TimetableData.confirm-replan(); } }
+            }
+        }
+    }
+}

@@ -1,0 +1,251 @@
+// Import / Export: Lockin Plan Format, validated JSON, import, export, backups.
+
+import { Palette, Metrics } from "../theme.slint";
+import {
+    AppButton, Card, Divider, SectionTitle, Field, TextArea, LabeledCombo
+} from "../components.slint";
+import { IoData } from "../state.slint";
+import { ScrollView } from "std-widgets.slint";
+
+export component IoPage inherits Rectangle {
+    background: transparent;
+
+    ScrollView {
+        width: parent.width;
+        height: parent.height;
+        content-width: self.width;
+
+        VerticalLayout {
+            padding: Metrics.page-pad;
+            spacing: 12px;
+
+            HorizontalLayout {
+                spacing: 8px;
+                SectionTitle {
+                    title: "Import / Export";
+                    subtitle: "Versioned Lockin Plan Format with schema validation. Files are read locally; nothing is fetched.";
+                    horizontal-stretch: 1; }
+                for name[i] in IoData.tab-names: AppButton {
+                    text: name;
+                    kind: IoData.tab == i ? 0 : 1;
+                    button-width: i == 1 ? 104px : 72px;
+                    button-height: 30px;
+                    clicked => { IoData.set-tab(i); }
+                }
+            }
+
+            if IoData.tab == 0: VerticalLayout {
+                spacing: 12px;
+                Card {
+                    VerticalLayout {
+                        padding: 16px;
+                        spacing: 9px;
+                        SectionTitle {
+                            title: "Plan builder";
+                            subtitle: "Fill these fields, add subjects and exams, then build a validated plan file."; }
+                        HorizontalLayout {
+                            spacing: 10px;
+                            Field { label: "Plan name"; text <=> IoData.builder-name; placeholder: "Kerala Plus One"; horizontal-stretch: 2; }
+                            Field { label: "Academic year"; text <=> IoData.builder-year; placeholder: "2026"; horizontal-stretch: 1; }
+                            Field { label: "Plan id (optional)"; text <=> IoData.builder-id; placeholder: "auto"; horizontal-stretch: 1; }
+                        }
+                        HorizontalLayout {
+                            spacing: 10px;
+                            Field { label: "Start date"; text <=> IoData.builder-start; placeholder: "2026-11-16"; horizontal-stretch: 1; }
+                            Field { label: "End date"; text <=> IoData.builder-end; placeholder: "2026-12-17"; horizontal-stretch: 1; }
+                            Field { label: "Timezone"; text <=> IoData.builder-timezone; placeholder: "Asia/Kolkata"; horizontal-stretch: 1; }
+                        }
+                    }
+                }
+
+                Card {
+                    VerticalLayout {
+                        padding: 16px;
+                        spacing: 7px;
+                        SectionTitle { title: "Subjects"; subtitle: "Chapters are separated by commas or slashes."; }
+                        for subject[j] in IoData.builder-subjects: HorizontalLayout {
+                            height: 42px;
+                            spacing: 6px;
+                            Rectangle { width: 8px; height: 30px; border-radius: 3px; background: subject.tint; }
+                            VerticalLayout {
+                                horizontal-stretch: 1; spacing: 1px; alignment: center;
+                                Text { text: subject.name; color: Palette.text; font-size: 11.5px; font-weight: 600; overflow: elide; }
+                                Text { text: subject.chapters; color: Palette.muted; font-size: 9.5px; overflow: elide; }
+                            }
+                            AppButton { text: "Remove"; kind: 3; button-width: 58px; button-height: 26px; clicked => { IoData.builder-remove-subject(j); } }
+                        }
+                        HorizontalLayout {
+                            spacing: 8px;
+                            Field { label: "New subject"; text <=> IoData.builder-new-subject; placeholder: "Hindi"; horizontal-stretch: 1; }
+                            Field { label: "Chapters"; text <=> IoData.builder-new-chapters; placeholder: "pending"; horizontal-stretch: 2; }
+                            AppButton { text: "Add subject"; kind: 1; button-width: 90px; button-height: 34px; clicked => { IoData.builder-add-subject(IoData.builder-new-subject, IoData.builder-new-chapters); } }
+                        }
+                    }
+                }
+
+                Card {
+                    VerticalLayout {
+                        padding: 16px;
+                        spacing: 7px;
+                        SectionTitle { title: "Exams"; subtitle: "Exam times are local to the plan timezone."; }
+                        for exam[i] in IoData.builder-exams: HorizontalLayout {
+                            height: 36px;
+                            spacing: 6px;
+                            Text { text: exam.date + " " + exam.time; color: Palette.muted; font-size: 9.5px; width: 104px; vertical-alignment: center; }
+                            VerticalLayout {
+                                horizontal-stretch: 1; spacing: 1px; alignment: center;
+                                Text { text: exam.label; color: Palette.text; font-size: 11px; overflow: elide; }
+                                Text { text: exam.subject; color: Palette.muted; font-size: 9px; overflow: elide; }
+                            }
+                            AppButton { text: "Remove"; kind: 3; button-width: 58px; button-height: 26px; clicked => { IoData.builder-remove-exam(i); } }
+                        }
+                        HorizontalLayout {
+                            spacing: 8px;
+                            Field { label: "Exam name"; text <=> IoData.builder-exam-label; placeholder: "Physics pre-test"; horizontal-stretch: 2; }
+                            LabeledCombo {
+                                label: "Subject"; model: IoData.builder-subject-names;
+                                current-index: IoData.builder-exam-subject;
+                                selected(index) => { IoData.builder-exam-subject = index; }
+                                horizontal-stretch: 1;
+                            }
+                            Field { label: "Date"; text <=> IoData.builder-exam-date; placeholder: "2026-11-30"; horizontal-stretch: 1; }
+                            Field { label: "Time"; text <=> IoData.builder-exam-time; placeholder: "13:30"; min-width: 84px; max-width: 100px; }
+                            AppButton { text: "Add"; kind: 1; button-width: 54px; button-height: 34px; clicked => { IoData.builder-add-exam(IoData.builder-exam-label, IoData.builder-exam-subject, IoData.builder-exam-date, IoData.builder-exam-time); } }
+                        }
+                    }
+                }
+
+                Card {
+                    VerticalLayout {
+                        padding: 16px;
+                        spacing: 8px;
+                        SectionTitle { title: "Build and validate"; subtitle: "Writes the plan JSON into the editor. Nothing is imported until you review the preview."; }
+                        TextArea { text <=> IoData.editor-text; placeholder: "The built Lockin Plan JSON appears here"; area-height: 260px; family: Palette.mono; }
+                        if IoData.feedback != "": Text { text: IoData.feedback; color: IoData.feedback-tone == 2 ? Palette.danger : IoData.feedback-tone == 1 ? Palette.success : Palette.muted; font-size: 11px; wrap: word-wrap; }
+                        HorizontalLayout {
+                            spacing: 8px;
+                            AppButton { text: "Load current plan"; kind: 1; button-width: 124px; clicked => { IoData.load-builder-current(); } }
+                            AppButton { text: "Empty template"; kind: 1; button-width: 104px; clicked => { IoData.empty-template(); } }
+                            AppButton { text: "Build JSON"; kind: 0; button-width: 92px; clicked => { IoData.builder-build(); } }
+                            AppButton { text: "Validate"; kind: 1; button-width: 76px; clicked => { IoData.validate-json(); } }
+                            AppButton { text: "Preview import"; kind: 0; button-width: 108px; clicked => { IoData.preview-import(); } }
+                            Rectangle { horizontal-stretch: 1; }
+                        }
+                    }
+                }
+            }
+
+            if IoData.tab == 1: VerticalLayout {
+                spacing: 10px;
+                Card {
+                    VerticalLayout {
+                        padding: 16px;
+                        spacing: 8px;
+                        SectionTitle { title: "Paste or edit JSON"; subtitle: "The editor checks the Lockin Plan version, required fields and references."; }
+                        TextArea { text <=> IoData.editor-text; placeholder: "Paste a Lockin Plan JSON here"; area-height: 420px; family: Palette.mono; }
+                        if IoData.feedback != "": Text { text: IoData.feedback; color: IoData.feedback-tone == 2 ? Palette.danger : IoData.feedback-tone == 1 ? Palette.success : Palette.muted; font-size: 11px; wrap: word-wrap; }
+                        HorizontalLayout {
+                            spacing: 8px;
+                            AppButton { text: "Validate"; kind: 1; button-width: 82px; clicked => { IoData.validate-json(); } }
+                            AppButton { text: "Preview import"; kind: 0; button-width: 106px; clicked => { IoData.preview-import(); } }
+                            AppButton { text: "Fix formatting"; kind: 1; button-width: 112px; clicked => { IoData.format-json(); } }
+                            AppButton { text: "Copy"; kind: 1; button-width: 66px; clicked => { IoData.copy-json(); } }
+                            AppButton { text: "Save as file"; kind: 1; button-width: 92px; clicked => { IoData.save-json-file(); } }
+                            Rectangle { horizontal-stretch: 1; }
+                        }
+                    }
+                }
+            }
+
+            if IoData.tab == 2: Card {
+                VerticalLayout {
+                    padding: 16px;
+                    spacing: 10px;
+                    SectionTitle { title: "Import from file"; subtitle: "Choose a .json plan or a .zip backup. JSON is previewed first; backups are opened in a temporary database to validate them."; }
+                    Field { label: "Selected file"; text <=> IoData.file-path; placeholder: "No file chosen"; editable: false; }
+                    HorizontalLayout {
+                        spacing: 8px;
+                        AppButton { text: "Choose file"; kind: 0; button-width: 102px; clicked => { IoData.pick-file(); } }
+                        LabeledCombo {
+                            label: "Merge or replace";
+                            model: ["Merge (keep history)", "Replace (keep history)"];
+                            current-index: IoData.import-mode;
+                            selected(index) => { IoData.import-mode = index; }
+                            min-width: 180px;
+                        }
+                        Rectangle { horizontal-stretch: 1; }
+                        AppButton { text: "Restore a backup"; kind: 2; button-width: 116px; clicked => { IoData.restore-backup(); } }
+                    }
+                    Text {
+                        text: "Merge keeps existing tasks and completed work, matching by task id first, then by date + start time + title. Replace never deletes sessions, revisions, mock tests, mistakes or sleep history.";
+                        color: Palette.muted; font-size: 10.5px; wrap: word-wrap;
+                    }
+                    if IoData.feedback != "": Text { text: IoData.feedback; color: IoData.feedback-tone == 2 ? Palette.danger : IoData.feedback-tone == 1 ? Palette.success : Palette.muted; font-size: 11px; wrap: word-wrap; }
+                    if IoData.preview-open: HorizontalLayout {
+                        spacing: 8px;
+                        AppButton { text: "Open preview"; kind: 1; button-width: 96px; clicked => { IoData.set-tab(1); } }
+                        AppButton { text: "Apply import"; kind: 0; button-width: 100px; clicked => { IoData.apply-import(IoData.import-mode); } }
+                    }
+                }
+            }
+
+            if IoData.tab == 3: VerticalLayout {
+                spacing: 10px;
+                Card {
+                    VerticalLayout {
+                        padding: 16px;
+                        spacing: 10px;
+                        SectionTitle { title: "Export"; subtitle: "All files are written where you choose; no upload."; }
+                        HorizontalLayout {
+                            spacing: 8px;
+                            AppButton { text: "Export plan JSON"; kind: 0; button-width: 128px; clicked => { IoData.export-plan(); } }
+                            AppButton { text: "Export JSON schema"; kind: 1; button-width: 134px; clicked => { IoData.export-schema(); } }
+                            AppButton { text: "Export full backup"; kind: 1; button-width: 132px; clicked => { IoData.export-backup(); } }
+                        }
+                        Text { text: "Schema location in the repository: " + IoData.schema-path; color: Palette.muted; font-size: 10.5px; }
+                        if IoData.feedback != "": Text { text: IoData.feedback; color: IoData.feedback-tone == 2 ? Palette.danger : IoData.feedback-tone == 1 ? Palette.success : Palette.muted; font-size: 11px; wrap: word-wrap; }
+                    }
+                }
+                Card {
+                    VerticalLayout {
+                        padding: 16px;
+                        spacing: 8px;
+                        SectionTitle { title: "Safety"; subtitle: "How replace and restore behave"; }
+                        Divider { }
+                        Text { text: "Replace imports plan structure (subjects, chapters, exams, templates, tasks) but preserves all focus sessions, revision history, mock tests, mistakes and sleep entries. It refuses to delete a plan that has recorded history."; color: Palette.text; font-size: 11px; wrap: word-wrap; }
+                        Text { text: "Restoring a backup replaces the local database only after the backup is opened, migrated and validated in a temporary file. The current database is checkpointed first."; color: Palette.text; font-size: 11px; wrap: word-wrap; }
+                    }
+                }
+            }
+
+            if IoData.preview-open: Card {
+                VerticalLayout {
+                    padding: 16px;
+                    spacing: 8px;
+                    SectionTitle { title: "Import preview"; subtitle: IoData.preview.exists ? IoData.preview.exists-text : "This plan does not exist locally yet"; }
+                    Text { text: IoData.preview.plan-name + "  ·  " + IoData.preview.plan-id; color: Palette.text; font-size: 12px; font-weight: 600; wrap: word-wrap; }
+                    Text { text: "Span: " + IoData.preview.span; color: Palette.muted; font-size: 11px; }
+                    Text { text: IoData.preview.summary; color: Palette.muted; font-size: 11px; wrap: word-wrap; }
+                    Divider { }
+                    HorizontalLayout {
+                        spacing: 8px;
+                        Text { text: "Subjects " + IoData.preview.subjects; color: Palette.text; font-size: 10.5px; }
+                        Text { text: "Chapters " + IoData.preview.chapters; color: Palette.text; font-size: 10.5px; }
+                        Text { text: "Exams " + IoData.preview.exams; color: Palette.text; font-size: 10.5px; }
+                        Text { text: "Templates " + IoData.preview.templates; color: Palette.text; font-size: 10.5px; }
+                        Text { text: "Tasks " + IoData.preview.tasks; color: Palette.text; font-size: 10.5px; }
+                    }
+                    if IoData.preview.warnings != "": Text { text: "Warnings · " + IoData.preview.warnings; color: Palette.warning; font-size: 10.5px; wrap: word-wrap; }
+                    if IoData.preview.errors != "": Text { text: "Errors · " + IoData.preview.errors; color: Palette.danger; font-size: 10.5px; wrap: word-wrap; }
+                    HorizontalLayout {
+                        spacing: 8px;
+                        AppButton { text: "Close preview"; kind: 1; button-width: 102px; clicked => { IoData.close-preview(); } }
+                        AppButton { text: "Merge into current"; kind: 0; button-width: 124px; clicked => { IoData.apply-import(0); } }
+                        AppButton { text: "Replace current"; kind: 3; button-width: 110px; clicked => { IoData.apply-import(1); } }
+                        Rectangle { horizontal-stretch: 1; }
+                    }
+                }
+            }
+        }
+    }
+}

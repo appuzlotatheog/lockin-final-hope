@@ -1,0 +1,2217 @@
+{
+  "format": "lockin-plan",
+  "schema_version": 1,
+  "plan": {
+    "id": "kerala-plus-one-christmas-2026",
+    "name": "Plus One Christmas Examinations 2026",
+    "timezone": "Asia/Kolkata",
+    "start_date": "2026-11-16",
+    "end_date": "2026-12-17",
+    "academic_year": "2026–27"
+  },
+  "subjects": [
+    {
+      "id": "sub-physics",
+      "name": "Physics",
+      "color": "#9B7BFF",
+      "sort_order": 0,
+      "chapters": [
+        {
+          "id": "physics-01",
+          "title": "Units and Measurements",
+          "order": 0,
+          "status": "NotStarted"
+        },
+        {
+          "id": "physics-02",
+          "title": "Motion in a Straight Line",
+          "order": 1,
+          "status": "NotStarted"
+        },
+        {
+          "id": "physics-03",
+          "title": "Motion in a Plane",
+          "order": 2,
+          "status": "NotStarted"
+        },
+        {
+          "id": "physics-04",
+          "title": "Laws of Motion",
+          "order": 3,
+          "status": "NotStarted"
+        },
+        {
+          "id": "physics-05",
+          "title": "Work, Energy and Power",
+          "order": 4,
+          "status": "NotStarted"
+        },
+        {
+          "id": "physics-06",
+          "title": "System of Particles and Rotational Motion",
+          "order": 5,
+          "status": "NotStarted"
+        },
+        {
+          "id": "physics-07",
+          "title": "Gravitation",
+          "order": 6,
+          "status": "NotStarted"
+        },
+        {
+          "id": "physics-08",
+          "title": "Thermodynamics",
+          "order": 7,
+          "status": "NotStarted"
+        },
+        {
+          "id": "physics-09",
+          "title": "Mechanical Properties of Solids",
+          "order": 8,
+          "status": "NotStarted"
+        },
+        {
+          "id": "physics-10",
+          "title": "Mechanical Properties of Fluids",
+          "order": 9,
+          "status": "NotStarted"
+        },
+        {
+          "id": "physics-11",
+          "title": "Thermal Properties of Matter",
+          "order": 10,
+          "status": "NotStarted"
+        }
+      ]
+    },
+    {
+      "id": "sub-chemistry",
+      "name": "Chemistry",
+      "color": "#69D6A6",
+      "sort_order": 1,
+      "chapters": [
+        {
+          "id": "chemistry-01",
+          "title": "Some Basic Concepts of Chemistry",
+          "order": 0,
+          "status": "NotStarted"
+        },
+        {
+          "id": "chemistry-02",
+          "title": "Redox Reactions",
+          "order": 1,
+          "status": "NotStarted"
+        },
+        {
+          "id": "chemistry-03",
+          "title": "Equilibrium",
+          "order": 2,
+          "status": "NotStarted"
+        },
+        {
+          "id": "chemistry-04",
+          "title": "Thermodynamics",
+          "order": 3,
+          "status": "NotStarted"
+        },
+        {
+          "id": "chemistry-05",
+          "title": "Chemical Bonding and Molecular Structure",
+          "order": 4,
+          "status": "NotStarted"
+        },
+        {
+          "id": "chemistry-06",
+          "title": "Classification of Elements and Periodicity in Properties",
+          "order": 5,
+          "status": "NotStarted"
+        },
+        {
+          "id": "chemistry-07",
+          "title": "Structure of Atom",
+          "order": 6,
+          "status": "NotStarted"
+        }
+      ]
+    },
+    {
+      "id": "sub-mathematics",
+      "name": "Mathematics",
+      "color": "#EABF73",
+      "sort_order": 2,
+      "chapters": [
+        {
+          "id": "mathematics-01",
+          "title": "Sets",
+          "order": 0,
+          "status": "NotStarted"
+        },
+        {
+          "id": "mathematics-02",
+          "title": "Relations and Functions",
+          "order": 1,
+          "status": "NotStarted"
+        },
+        {
+          "id": "mathematics-03",
+          "title": "Trigonometric Functions",
+          "order": 2,
+          "status": "NotStarted"
+        },
+        {
+          "id": "mathematics-04",
+          "title": "Principle of Mathematical Induction",
+          "order": 3,
+          "status": "NotStarted"
+        },
+        {
+          "id": "mathematics-05",
+          "title": "Introduction to Three Dimensional Geometry",
+          "order": 4,
+          "status": "NotStarted"
+        },
+        {
+          "id": "mathematics-06",
+          "title": "Conic Sections",
+          "order": 5,
+          "status": "NotStarted"
+        },
+        {
+          "id": "mathematics-07",
+          "title": "Straight Lines",
+          "order": 6,
+          "status": "NotStarted"
+        },
+        {
+          "id": "mathematics-08",
+          "title": "Sequences and Series",
+          "order": 7,
+          "status": "NotStarted"
+        },
+        {
+          "id": "mathematics-09",
+          "title": "Binomial Theorem",
+          "order": 8,
+          "status": "NotStarted"
+        },
+        {
+          "id": "mathematics-10",
+          "title": "Permutations and Combinations",
+          "order": 9,
+          "status": "NotStarted"
+        },
+        {
+          "id": "mathematics-11",
+          "title": "Linear Inequalities",
+          "order": 10,
+          "status": "NotStarted"
+        },
+        {
+          "id": "mathematics-12",
+          "title": "Complex Numbers and Quadratic Equations",
+          "order": 11,
+          "status": "NotStarted"
+        }
+      ]
+    },
+    {
+      "id": "sub-computer-science",
+      "name": "Computer Science",
+      "color": "#7FB2E6",
+      "sort_order": 3,
+      "chapters": [
+        {
+          "id": "computer-science-01",
+          "title": "Introduction to Computing",
+          "order": 0,
+          "status": "NotStarted"
+        },
+        {
+          "id": "computer-science-02",
+          "title": "Data Representation and Boolean Algebra",
+          "order": 1,
+          "status": "NotStarted"
+        },
+        {
+          "id": "computer-science-03",
+          "title": "Computer System Organisation",
+          "order": 2,
+          "status": "NotStarted"
+        },
+        {
+          "id": "computer-science-04",
+          "title": "Getting Started with Python",
+          "order": 3,
+          "status": "NotStarted"
+        },
+        {
+          "id": "computer-science-05",
+          "title": "Python Fundamentals",
+          "order": 4,
+          "status": "NotStarted"
+        },
+        {
+          "id": "computer-science-06",
+          "title": "Control Statements",
+          "order": 5,
+          "status": "NotStarted"
+        },
+        {
+          "id": "computer-science-07",
+          "title": "Functions and Modules",
+          "order": 6,
+          "status": "NotStarted"
+        },
+        {
+          "id": "computer-science-08",
+          "title": "Strings in Python",
+          "order": 7,
+          "status": "NotStarted"
+        },
+        {
+          "id": "computer-science-09",
+          "title": "Lists",
+          "order": 8,
+          "status": "NotStarted"
+        }
+      ]
+    },
+    {
+      "id": "sub-english",
+      "name": "English",
+      "color": "#E67F90",
+      "sort_order": 4,
+      "chapters": [
+        {
+          "id": "english-01",
+          "title": "Fufi",
+          "order": 0,
+          "status": "NotStarted"
+        },
+        {
+          "id": "english-02",
+          "title": "So Much Happiness",
+          "order": 1,
+          "status": "NotStarted"
+        },
+        {
+          "id": "english-03",
+          "title": "An Angel in Disguise",
+          "order": 2,
+          "status": "NotStarted"
+        },
+        {
+          "id": "english-04",
+          "title": "A Draught of Kindness",
+          "order": 3,
+          "status": "NotStarted"
+        },
+        {
+          "id": "english-05",
+          "title": "Ozymandias",
+          "order": 4,
+          "status": "NotStarted"
+        },
+        {
+          "id": "english-06",
+          "title": "A Retrieved Reformation",
+          "order": 5,
+          "status": "NotStarted"
+        },
+        {
+          "id": "english-07",
+          "title": "Classic Cars: Poetry on Wheels",
+          "order": 6,
+          "status": "NotStarted"
+        },
+        {
+          "id": "english-08",
+          "title": "The Window is Blurred",
+          "order": 7,
+          "status": "NotStarted"
+        },
+        {
+          "id": "english-09",
+          "title": "Women's World",
+          "order": 8,
+          "status": "NotStarted"
+        },
+        {
+          "id": "english-10",
+          "title": "What a Wonderful World",
+          "order": 9,
+          "status": "NotStarted"
+        },
+        {
+          "id": "english-11",
+          "title": "Let's Live with Them",
+          "order": 10,
+          "status": "NotStarted"
+        },
+        {
+          "id": "english-12",
+          "title": "Radha, Just Radha",
+          "order": 11,
+          "status": "NotStarted"
+        },
+        {
+          "id": "english-13",
+          "title": "Cat in an Empty Apartment",
+          "order": 12,
+          "status": "NotStarted"
+        }
+      ]
+    },
+    {
+      "id": "sub-hindi",
+      "name": "Hindi",
+      "color": "#C6A6FF",
+      "sort_order": 5,
+      "chapters": []
+    }
+  ],
+  "exams": [
+    {
+      "id": "exam-english",
+      "subject_id": "sub-english",
+      "label": "English (Part I)",
+      "date": "2026-12-09",
+      "start_time": "13:30",
+      "session": "Afternoon"
+    },
+    {
+      "id": "exam-physics",
+      "subject_id": "sub-physics",
+      "label": "Physics",
+      "date": "2026-12-10",
+      "start_time": "13:30",
+      "session": "Afternoon"
+    },
+    {
+      "id": "exam-computer-science",
+      "subject_id": "sub-computer-science",
+      "label": "Computer Science",
+      "date": "2026-12-11",
+      "start_time": "14:00",
+      "session": "Afternoon"
+    },
+    {
+      "id": "exam-mathematics",
+      "subject_id": "sub-mathematics",
+      "label": "Mathematics",
+      "date": "2026-12-14",
+      "start_time": "09:30",
+      "session": "Morning"
+    },
+    {
+      "id": "exam-chemistry",
+      "subject_id": "sub-chemistry",
+      "label": "Chemistry",
+      "date": "2026-12-15",
+      "start_time": "13:30",
+      "session": "Afternoon"
+    },
+    {
+      "id": "exam-hindi",
+      "subject_id": "sub-hindi",
+      "label": "Hindi (Part II Language)",
+      "date": "2026-12-17",
+      "start_time": "13:30",
+      "session": "Afternoon"
+    }
+  ],
+  "schedule_templates": [
+    {
+      "id": "tpl-weekday",
+      "name": "School day",
+      "day_types": [
+        "Weekday"
+      ],
+      "slots": [
+        {
+          "id": "tpl-weekday-slot-1",
+          "start_time": "05:15",
+          "end_time": "06:15",
+          "type": "Study",
+          "title": "Mathematics / Physics study"
+        },
+        {
+          "id": "tpl-weekday-slot-2",
+          "start_time": "19:00",
+          "end_time": "20:15",
+          "type": "Study",
+          "title": "Main subject: Physics / Chemistry"
+        },
+        {
+          "id": "tpl-weekday-slot-3",
+          "start_time": "20:15",
+          "end_time": "20:25",
+          "type": "Break",
+          "title": "Break"
+        },
+        {
+          "id": "tpl-weekday-slot-4",
+          "start_time": "20:25",
+          "end_time": "21:10",
+          "type": "Study",
+          "title": "Computer Science",
+          "subject_id": "sub-computer-science"
+        },
+        {
+          "id": "tpl-weekday-slot-5",
+          "start_time": "21:10",
+          "end_time": "21:40",
+          "type": "Meal",
+          "title": "Dinner"
+        },
+        {
+          "id": "tpl-weekday-slot-6",
+          "start_time": "21:40",
+          "end_time": "22:30",
+          "type": "Study",
+          "title": "English / Hindi / revision"
+        }
+      ]
+    },
+    {
+      "id": "tpl-saturday",
+      "name": "Saturday",
+      "day_types": [
+        "Saturday"
+      ],
+      "slots": [
+        {
+          "id": "tpl-saturday-slot-1",
+          "start_time": "07:30",
+          "end_time": "09:00",
+          "type": "Study",
+          "title": "Mathematics",
+          "subject_id": "sub-mathematics"
+        },
+        {
+          "id": "tpl-saturday-slot-2",
+          "start_time": "09:30",
+          "end_time": "11:00",
+          "type": "Study",
+          "title": "Physics / Chemistry"
+        },
+        {
+          "id": "tpl-saturday-slot-3",
+          "start_time": "11:30",
+          "end_time": "13:00",
+          "type": "Study",
+          "title": "Physics / Chemistry"
+        },
+        {
+          "id": "tpl-saturday-slot-4",
+          "start_time": "14:30",
+          "end_time": "15:30",
+          "type": "Study",
+          "title": "Computer Science",
+          "subject_id": "sub-computer-science"
+        },
+        {
+          "id": "tpl-saturday-slot-5",
+          "start_time": "16:00",
+          "end_time": "16:50",
+          "type": "Study",
+          "title": "English / Hindi"
+        },
+        {
+          "id": "tpl-saturday-slot-6",
+          "start_time": "19:00",
+          "end_time": "19:45",
+          "type": "Study",
+          "title": "Backlog"
+        }
+      ]
+    },
+    {
+      "id": "tpl-sunday",
+      "name": "Sunday",
+      "day_types": [
+        "Sunday"
+      ],
+      "slots": [
+        {
+          "id": "tpl-sunday-slot-1",
+          "start_time": "07:30",
+          "end_time": "09:00",
+          "type": "Study",
+          "title": "Weekly test"
+        },
+        {
+          "id": "tpl-sunday-slot-2",
+          "start_time": "09:30",
+          "end_time": "11:00",
+          "type": "Study",
+          "title": "Test corrections"
+        },
+        {
+          "id": "tpl-sunday-slot-3",
+          "start_time": "11:30",
+          "end_time": "13:00",
+          "type": "Study",
+          "title": "Chemistry / revision",
+          "subject_id": "sub-chemistry"
+        },
+        {
+          "id": "tpl-sunday-slot-4",
+          "start_time": "14:30",
+          "end_time": "15:30",
+          "type": "Study",
+          "title": "Computer Science practice",
+          "subject_id": "sub-computer-science"
+        },
+        {
+          "id": "tpl-sunday-slot-5",
+          "start_time": "16:00",
+          "end_time": "16:50",
+          "type": "Study",
+          "title": "English / Hindi"
+        },
+        {
+          "id": "tpl-sunday-slot-6",
+          "start_time": "19:00",
+          "end_time": "19:45",
+          "type": "Study",
+          "title": "Weekly review and planning"
+        }
+      ]
+    }
+  ],
+  "tasks": [
+    {
+      "id": "c6e678b4-8ac5-4b41-9482-32481cd3cc24",
+      "date": "2026-11-16",
+      "title": "Mathematics / Physics study",
+      "task_type": "Study",
+      "start_time": "05:15",
+      "end_time": "06:15",
+      "estimated_minutes": 60,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "80b2d4a1-5d19-494a-a029-18255697c0d5",
+      "date": "2026-11-16",
+      "title": "Main subject: Physics / Chemistry",
+      "task_type": "Study",
+      "start_time": "19:00",
+      "end_time": "20:15",
+      "estimated_minutes": 75,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "c38125d9-ca9a-45d9-87bf-a640160beb74",
+      "date": "2026-11-16",
+      "title": "Computer Science",
+      "task_type": "Study",
+      "subject_id": "sub-computer-science",
+      "start_time": "20:25",
+      "end_time": "21:10",
+      "estimated_minutes": 45,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "9e57b389-c4f1-4389-9c51-ce29a8e67be4",
+      "date": "2026-11-16",
+      "title": "English / Hindi / revision",
+      "task_type": "Study",
+      "start_time": "21:40",
+      "end_time": "22:30",
+      "estimated_minutes": 50,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "28dc2d58-2be0-4ca9-b52a-49c6289861ad",
+      "date": "2026-11-17",
+      "title": "Mathematics / Physics study",
+      "task_type": "Study",
+      "start_time": "05:15",
+      "end_time": "06:15",
+      "estimated_minutes": 60,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "ab61a8a4-a2af-4e2b-8d24-ad3a50a7a164",
+      "date": "2026-11-17",
+      "title": "Main subject: Physics / Chemistry",
+      "task_type": "Study",
+      "start_time": "19:00",
+      "end_time": "20:15",
+      "estimated_minutes": 75,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "0c855c78-6e6a-42f5-9b99-cafa7ebb4bac",
+      "date": "2026-11-17",
+      "title": "Computer Science",
+      "task_type": "Study",
+      "subject_id": "sub-computer-science",
+      "start_time": "20:25",
+      "end_time": "21:10",
+      "estimated_minutes": 45,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "f9487f16-d249-4e82-8d23-57b4151cf07f",
+      "date": "2026-11-17",
+      "title": "English / Hindi / revision",
+      "task_type": "Study",
+      "start_time": "21:40",
+      "end_time": "22:30",
+      "estimated_minutes": 50,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "6a92fd34-ab11-4cf6-8dbf-7288b3a1b112",
+      "date": "2026-11-18",
+      "title": "Mathematics / Physics study",
+      "task_type": "Study",
+      "start_time": "05:15",
+      "end_time": "06:15",
+      "estimated_minutes": 60,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "689abf01-cb6e-459d-b0ba-265c4cb0c099",
+      "date": "2026-11-18",
+      "title": "Main subject: Physics / Chemistry",
+      "task_type": "Study",
+      "start_time": "19:00",
+      "end_time": "20:15",
+      "estimated_minutes": 75,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "f2f7a88b-9bd1-4611-b4d7-709a3fa38272",
+      "date": "2026-11-18",
+      "title": "Computer Science",
+      "task_type": "Study",
+      "subject_id": "sub-computer-science",
+      "start_time": "20:25",
+      "end_time": "21:10",
+      "estimated_minutes": 45,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "fa56e1aa-875c-44b8-b3ff-780ffe616630",
+      "date": "2026-11-18",
+      "title": "English / Hindi / revision",
+      "task_type": "Study",
+      "start_time": "21:40",
+      "end_time": "22:30",
+      "estimated_minutes": 50,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "6bd9d93b-9ea2-42d1-a72f-543d24d576ce",
+      "date": "2026-11-19",
+      "title": "Mathematics / Physics study",
+      "task_type": "Study",
+      "start_time": "05:15",
+      "end_time": "06:15",
+      "estimated_minutes": 60,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "1d846d3a-aecb-4f97-be40-4dbd2f274f6f",
+      "date": "2026-11-19",
+      "title": "Main subject: Physics / Chemistry",
+      "task_type": "Study",
+      "start_time": "19:00",
+      "end_time": "20:15",
+      "estimated_minutes": 75,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "77f17881-451b-4789-adf6-b846de76d9e9",
+      "date": "2026-11-19",
+      "title": "Computer Science",
+      "task_type": "Study",
+      "subject_id": "sub-computer-science",
+      "start_time": "20:25",
+      "end_time": "21:10",
+      "estimated_minutes": 45,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "708c6973-9481-4e2a-9028-6068ba670312",
+      "date": "2026-11-19",
+      "title": "English / Hindi / revision",
+      "task_type": "Study",
+      "start_time": "21:40",
+      "end_time": "22:30",
+      "estimated_minutes": 50,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "b9a80810-b10c-433b-b200-cb89f0e0f11f",
+      "date": "2026-11-20",
+      "title": "Mathematics / Physics study",
+      "task_type": "Study",
+      "start_time": "05:15",
+      "end_time": "06:15",
+      "estimated_minutes": 60,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "e58cc769-2f74-4566-a54b-3d10f1c8de5e",
+      "date": "2026-11-20",
+      "title": "Main subject: Physics / Chemistry",
+      "task_type": "Study",
+      "start_time": "19:00",
+      "end_time": "20:15",
+      "estimated_minutes": 75,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "ed77c94d-6bf8-4ae3-be8f-9da45f28ef9e",
+      "date": "2026-11-20",
+      "title": "Computer Science",
+      "task_type": "Study",
+      "subject_id": "sub-computer-science",
+      "start_time": "20:25",
+      "end_time": "21:10",
+      "estimated_minutes": 45,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "91ea17ac-63f0-49f4-88ab-4de9c311e590",
+      "date": "2026-11-20",
+      "title": "English / Hindi / revision",
+      "task_type": "Study",
+      "start_time": "21:40",
+      "end_time": "22:30",
+      "estimated_minutes": 50,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "a6647a4a-83c9-4395-b731-c599615c73a7",
+      "date": "2026-11-21",
+      "title": "Mathematics",
+      "task_type": "Study",
+      "subject_id": "sub-mathematics",
+      "start_time": "07:30",
+      "end_time": "09:00",
+      "estimated_minutes": 90,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "37f29906-7b8f-4a0c-9616-77aa850cd1ae",
+      "date": "2026-11-21",
+      "title": "Physics / Chemistry",
+      "task_type": "Study",
+      "start_time": "09:30",
+      "end_time": "11:00",
+      "estimated_minutes": 90,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "f59827a1-e470-4795-9312-77ed06efff34",
+      "date": "2026-11-21",
+      "title": "Physics / Chemistry",
+      "task_type": "Study",
+      "start_time": "11:30",
+      "end_time": "13:00",
+      "estimated_minutes": 90,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "9ca6dc40-e461-4edb-a21b-cb69ebc9bf6b",
+      "date": "2026-11-21",
+      "title": "Computer Science",
+      "task_type": "Study",
+      "subject_id": "sub-computer-science",
+      "start_time": "14:30",
+      "end_time": "15:30",
+      "estimated_minutes": 60,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "c06f6781-8f15-4f1b-a34a-ce0fc248551f",
+      "date": "2026-11-21",
+      "title": "English / Hindi",
+      "task_type": "Study",
+      "start_time": "16:00",
+      "end_time": "16:50",
+      "estimated_minutes": 50,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "68ac7ebd-f103-4b91-b9ec-c68d23b11e15",
+      "date": "2026-11-21",
+      "title": "Backlog",
+      "task_type": "Study",
+      "start_time": "19:00",
+      "end_time": "19:45",
+      "estimated_minutes": 45,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "d848ffc4-a3da-4ba1-b12d-4a96b82ad95b",
+      "date": "2026-11-22",
+      "title": "Weekly test",
+      "task_type": "Study",
+      "start_time": "07:30",
+      "end_time": "09:00",
+      "estimated_minutes": 90,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "4cd5b7c8-8816-4a89-baf0-7ed893edcccd",
+      "date": "2026-11-22",
+      "title": "Test corrections",
+      "task_type": "Study",
+      "start_time": "09:30",
+      "end_time": "11:00",
+      "estimated_minutes": 90,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "ec41db51-2b53-451e-8ee0-6a937cd37b5c",
+      "date": "2026-11-22",
+      "title": "Chemistry / revision",
+      "task_type": "Study",
+      "subject_id": "sub-chemistry",
+      "start_time": "11:30",
+      "end_time": "13:00",
+      "estimated_minutes": 90,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "e467d2d1-1b71-43ed-9645-ff7f6a250a7c",
+      "date": "2026-11-22",
+      "title": "Computer Science practice",
+      "task_type": "Study",
+      "subject_id": "sub-computer-science",
+      "start_time": "14:30",
+      "end_time": "15:30",
+      "estimated_minutes": 60,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "0d6b0f53-ce69-4915-a23f-d2332068e26b",
+      "date": "2026-11-22",
+      "title": "English / Hindi",
+      "task_type": "Study",
+      "start_time": "16:00",
+      "end_time": "16:50",
+      "estimated_minutes": 50,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "6c574b60-2a51-4486-85dd-9c77cbe04db2",
+      "date": "2026-11-22",
+      "title": "Weekly review and planning",
+      "task_type": "Study",
+      "start_time": "19:00",
+      "end_time": "19:45",
+      "estimated_minutes": 45,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "cd413683-c58b-4449-8d94-43c45b04eaa1",
+      "date": "2026-11-23",
+      "title": "Mathematics / Physics study",
+      "task_type": "Study",
+      "start_time": "05:15",
+      "end_time": "06:15",
+      "estimated_minutes": 60,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "4c26ab26-1faf-4f40-8617-d97dacd32227",
+      "date": "2026-11-23",
+      "title": "Main subject: Physics / Chemistry",
+      "task_type": "Study",
+      "start_time": "19:00",
+      "end_time": "20:15",
+      "estimated_minutes": 75,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "124a8085-eb08-4ae0-a404-21555c6a484a",
+      "date": "2026-11-23",
+      "title": "Computer Science",
+      "task_type": "Study",
+      "subject_id": "sub-computer-science",
+      "start_time": "20:25",
+      "end_time": "21:10",
+      "estimated_minutes": 45,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "b5750c23-2099-41fc-ab8c-0f1fe18317cd",
+      "date": "2026-11-23",
+      "title": "English / Hindi / revision",
+      "task_type": "Study",
+      "start_time": "21:40",
+      "end_time": "22:30",
+      "estimated_minutes": 50,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "8f02d34a-c7c4-4236-b6f2-a7444bd1c792",
+      "date": "2026-11-24",
+      "title": "Mathematics / Physics study",
+      "task_type": "Study",
+      "start_time": "05:15",
+      "end_time": "06:15",
+      "estimated_minutes": 60,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "7e71e455-6644-4716-97f4-41a3b52d69cf",
+      "date": "2026-11-24",
+      "title": "Main subject: Physics / Chemistry",
+      "task_type": "Study",
+      "start_time": "19:00",
+      "end_time": "20:15",
+      "estimated_minutes": 75,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "b7154f39-d7ef-4e8b-8dbb-8d4018d430a3",
+      "date": "2026-11-24",
+      "title": "Computer Science",
+      "task_type": "Study",
+      "subject_id": "sub-computer-science",
+      "start_time": "20:25",
+      "end_time": "21:10",
+      "estimated_minutes": 45,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "33997489-467a-4115-93d2-cdf07b158f0d",
+      "date": "2026-11-24",
+      "title": "English / Hindi / revision",
+      "task_type": "Study",
+      "start_time": "21:40",
+      "end_time": "22:30",
+      "estimated_minutes": 50,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "d141d940-48aa-4d79-87d6-7b242c133d48",
+      "date": "2026-11-25",
+      "title": "Mathematics / Physics study",
+      "task_type": "Study",
+      "start_time": "05:15",
+      "end_time": "06:15",
+      "estimated_minutes": 60,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "6b728f2f-b177-45aa-99ca-357f305215ae",
+      "date": "2026-11-25",
+      "title": "Main subject: Physics / Chemistry",
+      "task_type": "Study",
+      "start_time": "19:00",
+      "end_time": "20:15",
+      "estimated_minutes": 75,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "918d9eaf-3d5a-4f02-a747-ac2db50edf51",
+      "date": "2026-11-25",
+      "title": "Computer Science",
+      "task_type": "Study",
+      "subject_id": "sub-computer-science",
+      "start_time": "20:25",
+      "end_time": "21:10",
+      "estimated_minutes": 45,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "9d028441-52b3-461c-a6d7-bbf0afba4872",
+      "date": "2026-11-25",
+      "title": "English / Hindi / revision",
+      "task_type": "Study",
+      "start_time": "21:40",
+      "end_time": "22:30",
+      "estimated_minutes": 50,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "12d3e9d5-0a7a-4c0e-83bd-ea8e77e9521c",
+      "date": "2026-11-26",
+      "title": "Mathematics / Physics study",
+      "task_type": "Study",
+      "start_time": "05:15",
+      "end_time": "06:15",
+      "estimated_minutes": 60,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "3653e446-f701-4ce8-94e3-d6d9fb94926d",
+      "date": "2026-11-26",
+      "title": "Main subject: Physics / Chemistry",
+      "task_type": "Study",
+      "start_time": "19:00",
+      "end_time": "20:15",
+      "estimated_minutes": 75,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "88fb854f-6c07-4f4f-a489-84fff9ca3b92",
+      "date": "2026-11-26",
+      "title": "Computer Science",
+      "task_type": "Study",
+      "subject_id": "sub-computer-science",
+      "start_time": "20:25",
+      "end_time": "21:10",
+      "estimated_minutes": 45,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "c39b43da-254a-4f69-9d1c-1c8b2726f1f3",
+      "date": "2026-11-26",
+      "title": "English / Hindi / revision",
+      "task_type": "Study",
+      "start_time": "21:40",
+      "end_time": "22:30",
+      "estimated_minutes": 50,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "e11cb6ae-967a-47c8-865d-1b23bf1db6d4",
+      "date": "2026-11-27",
+      "title": "Mathematics / Physics study",
+      "task_type": "Study",
+      "start_time": "05:15",
+      "end_time": "06:15",
+      "estimated_minutes": 60,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "5e0e5f4f-8ded-4b7b-8628-b124997b440f",
+      "date": "2026-11-27",
+      "title": "Main subject: Physics / Chemistry",
+      "task_type": "Study",
+      "start_time": "19:00",
+      "end_time": "20:15",
+      "estimated_minutes": 75,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "dc0125f6-6068-4bcd-bbe1-bde03a29e280",
+      "date": "2026-11-27",
+      "title": "Computer Science",
+      "task_type": "Study",
+      "subject_id": "sub-computer-science",
+      "start_time": "20:25",
+      "end_time": "21:10",
+      "estimated_minutes": 45,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "dd33365b-9426-4d35-8223-9f0e16821176",
+      "date": "2026-11-27",
+      "title": "English / Hindi / revision",
+      "task_type": "Study",
+      "start_time": "21:40",
+      "end_time": "22:30",
+      "estimated_minutes": 50,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "039f2473-94fb-4341-8718-4c0c23db3e00",
+      "date": "2026-11-28",
+      "title": "Mathematics",
+      "task_type": "Study",
+      "subject_id": "sub-mathematics",
+      "start_time": "07:30",
+      "end_time": "09:00",
+      "estimated_minutes": 90,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "ee593a4a-9a06-44c6-b682-5af0f908c1e8",
+      "date": "2026-11-28",
+      "title": "Physics / Chemistry",
+      "task_type": "Study",
+      "start_time": "09:30",
+      "end_time": "11:00",
+      "estimated_minutes": 90,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "afea38e3-98a3-4800-b169-d198b1c33ab5",
+      "date": "2026-11-28",
+      "title": "Physics / Chemistry",
+      "task_type": "Study",
+      "start_time": "11:30",
+      "end_time": "13:00",
+      "estimated_minutes": 90,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "c3b2c074-d304-4a2a-aec8-c0f1e1d6d034",
+      "date": "2026-11-28",
+      "title": "Computer Science",
+      "task_type": "Study",
+      "subject_id": "sub-computer-science",
+      "start_time": "14:30",
+      "end_time": "15:30",
+      "estimated_minutes": 60,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "43f89d9d-1a7b-4cc9-a1d3-0566128dfb46",
+      "date": "2026-11-28",
+      "title": "English / Hindi",
+      "task_type": "Study",
+      "start_time": "16:00",
+      "end_time": "16:50",
+      "estimated_minutes": 50,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "ac7b3737-9e50-4834-8064-23256430aa45",
+      "date": "2026-11-28",
+      "title": "Backlog",
+      "task_type": "Study",
+      "start_time": "19:00",
+      "end_time": "19:45",
+      "estimated_minutes": 45,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "c55120a7-edfc-40db-97cd-5482a9c113ba",
+      "date": "2026-11-29",
+      "title": "Weekly test",
+      "task_type": "Study",
+      "start_time": "07:30",
+      "end_time": "09:00",
+      "estimated_minutes": 90,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "b9cc9c36-a938-4a69-acf7-8fbac8644705",
+      "date": "2026-11-29",
+      "title": "Test corrections",
+      "task_type": "Study",
+      "start_time": "09:30",
+      "end_time": "11:00",
+      "estimated_minutes": 90,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "1cce2b21-be1c-41c0-bc0e-ee6bb82266ec",
+      "date": "2026-11-29",
+      "title": "Chemistry / revision",
+      "task_type": "Study",
+      "subject_id": "sub-chemistry",
+      "start_time": "11:30",
+      "end_time": "13:00",
+      "estimated_minutes": 90,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "acf37909-d737-4b5a-ac7d-1d826ae2b2cd",
+      "date": "2026-11-29",
+      "title": "Computer Science practice",
+      "task_type": "Study",
+      "subject_id": "sub-computer-science",
+      "start_time": "14:30",
+      "end_time": "15:30",
+      "estimated_minutes": 60,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "c9f2ccaa-c6c2-4698-b379-83a7dcc0c37b",
+      "date": "2026-11-29",
+      "title": "English / Hindi",
+      "task_type": "Study",
+      "start_time": "16:00",
+      "end_time": "16:50",
+      "estimated_minutes": 50,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "f340ae56-b446-4ac5-a828-edcc811749fc",
+      "date": "2026-11-29",
+      "title": "Weekly review and planning",
+      "task_type": "Study",
+      "start_time": "19:00",
+      "end_time": "19:45",
+      "estimated_minutes": 45,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "7ff9381a-eee2-4dc1-a07a-c5f706a49a8c",
+      "date": "2026-11-30",
+      "title": "Mathematics / Physics study",
+      "task_type": "Study",
+      "start_time": "05:15",
+      "end_time": "06:15",
+      "estimated_minutes": 60,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "1180a844-8f7f-4a2f-876b-ef6cc486a2d7",
+      "date": "2026-11-30",
+      "title": "Main subject: Physics / Chemistry",
+      "task_type": "Study",
+      "start_time": "19:00",
+      "end_time": "20:15",
+      "estimated_minutes": 75,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "91e2c2ba-ad69-4ba3-80fe-19b804050b3b",
+      "date": "2026-11-30",
+      "title": "Computer Science",
+      "task_type": "Study",
+      "subject_id": "sub-computer-science",
+      "start_time": "20:25",
+      "end_time": "21:10",
+      "estimated_minutes": 45,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "b3939a5d-d5f3-4f6b-a9cb-a1d7e234a3f9",
+      "date": "2026-11-30",
+      "title": "English / Hindi / revision",
+      "task_type": "Study",
+      "start_time": "21:40",
+      "end_time": "22:30",
+      "estimated_minutes": 50,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "f89341fa-a6c6-4f0e-85e9-0627982b1780",
+      "date": "2026-12-01",
+      "title": "Mathematics / Physics study",
+      "task_type": "Study",
+      "start_time": "05:15",
+      "end_time": "06:15",
+      "estimated_minutes": 60,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "52139124-1f1d-48b0-a086-e87a9336fc95",
+      "date": "2026-12-01",
+      "title": "Main subject: Physics / Chemistry",
+      "task_type": "Study",
+      "start_time": "19:00",
+      "end_time": "20:15",
+      "estimated_minutes": 75,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "bc918cf6-c036-47d6-b756-1e461c874cb7",
+      "date": "2026-12-01",
+      "title": "Computer Science",
+      "task_type": "Study",
+      "subject_id": "sub-computer-science",
+      "start_time": "20:25",
+      "end_time": "21:10",
+      "estimated_minutes": 45,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "f5a9974d-3eba-4e00-9c1f-1ea5916b800f",
+      "date": "2026-12-01",
+      "title": "English / Hindi / revision",
+      "task_type": "Study",
+      "start_time": "21:40",
+      "end_time": "22:30",
+      "estimated_minutes": 50,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "cd02fbdf-54af-4e09-bf5e-e010e1ad8b88",
+      "date": "2026-12-02",
+      "title": "Mathematics / Physics study",
+      "task_type": "Study",
+      "start_time": "05:15",
+      "end_time": "06:15",
+      "estimated_minutes": 60,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "f791f2cd-7924-42e5-85b8-5df67ffe12f0",
+      "date": "2026-12-02",
+      "title": "Main subject: Physics / Chemistry",
+      "task_type": "Study",
+      "start_time": "19:00",
+      "end_time": "20:15",
+      "estimated_minutes": 75,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "d0fc16a1-cecf-492e-a13c-c01710431626",
+      "date": "2026-12-02",
+      "title": "Computer Science",
+      "task_type": "Study",
+      "subject_id": "sub-computer-science",
+      "start_time": "20:25",
+      "end_time": "21:10",
+      "estimated_minutes": 45,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "47a501de-11aa-43aa-9434-974ed78e6bda",
+      "date": "2026-12-02",
+      "title": "English / Hindi / revision",
+      "task_type": "Study",
+      "start_time": "21:40",
+      "end_time": "22:30",
+      "estimated_minutes": 50,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "c5446039-71ad-486b-b0d7-6077bd8b8dd5",
+      "date": "2026-12-03",
+      "title": "Mathematics / Physics study",
+      "task_type": "Study",
+      "start_time": "05:15",
+      "end_time": "06:15",
+      "estimated_minutes": 60,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "c4b4b4c0-fb69-4dc4-a637-44922f919791",
+      "date": "2026-12-03",
+      "title": "Main subject: Physics / Chemistry",
+      "task_type": "Study",
+      "start_time": "19:00",
+      "end_time": "20:15",
+      "estimated_minutes": 75,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "35793d85-254e-41d2-b7de-62e1b9edc8f5",
+      "date": "2026-12-03",
+      "title": "Computer Science",
+      "task_type": "Study",
+      "subject_id": "sub-computer-science",
+      "start_time": "20:25",
+      "end_time": "21:10",
+      "estimated_minutes": 45,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "8828a0c1-0515-4e19-aa44-601aa1d4122d",
+      "date": "2026-12-03",
+      "title": "English / Hindi / revision",
+      "task_type": "Study",
+      "start_time": "21:40",
+      "end_time": "22:30",
+      "estimated_minutes": 50,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "1c877c6e-6617-408d-bd9a-0680214202e8",
+      "date": "2026-12-04",
+      "title": "Mathematics / Physics study",
+      "task_type": "Study",
+      "start_time": "05:15",
+      "end_time": "06:15",
+      "estimated_minutes": 60,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "789028cd-5bf7-4dff-b6ea-409dba0328e9",
+      "date": "2026-12-04",
+      "title": "Main subject: Physics / Chemistry",
+      "task_type": "Study",
+      "start_time": "19:00",
+      "end_time": "20:15",
+      "estimated_minutes": 75,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "66d06f33-057d-4fa7-86ee-853e5787998c",
+      "date": "2026-12-04",
+      "title": "Computer Science",
+      "task_type": "Study",
+      "subject_id": "sub-computer-science",
+      "start_time": "20:25",
+      "end_time": "21:10",
+      "estimated_minutes": 45,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "2e8d4acf-bedb-461d-bf15-859b6566645f",
+      "date": "2026-12-04",
+      "title": "English / Hindi / revision",
+      "task_type": "Study",
+      "start_time": "21:40",
+      "end_time": "22:30",
+      "estimated_minutes": 50,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "2f90d59a-a85d-4623-ba08-48b8eed7b6b7",
+      "date": "2026-12-05",
+      "title": "Mathematics",
+      "task_type": "Study",
+      "subject_id": "sub-mathematics",
+      "start_time": "07:30",
+      "end_time": "09:00",
+      "estimated_minutes": 90,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "7b33bbbd-d049-4239-a982-989ee73449d5",
+      "date": "2026-12-05",
+      "title": "Physics / Chemistry",
+      "task_type": "Study",
+      "start_time": "09:30",
+      "end_time": "11:00",
+      "estimated_minutes": 90,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "95bb09a3-5da8-41be-8e0c-fa54c93aea1b",
+      "date": "2026-12-05",
+      "title": "Physics / Chemistry",
+      "task_type": "Study",
+      "start_time": "11:30",
+      "end_time": "13:00",
+      "estimated_minutes": 90,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "443b7db8-50da-42c4-a024-2ede1f5aa658",
+      "date": "2026-12-05",
+      "title": "Computer Science",
+      "task_type": "Study",
+      "subject_id": "sub-computer-science",
+      "start_time": "14:30",
+      "end_time": "15:30",
+      "estimated_minutes": 60,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "ac6d3d74-af94-4c03-8028-a642750cd26a",
+      "date": "2026-12-05",
+      "title": "English / Hindi",
+      "task_type": "Study",
+      "start_time": "16:00",
+      "end_time": "16:50",
+      "estimated_minutes": 50,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "fcf6b607-bd81-48f6-9b32-896e7f2789b6",
+      "date": "2026-12-05",
+      "title": "Backlog",
+      "task_type": "Study",
+      "start_time": "19:00",
+      "end_time": "19:45",
+      "estimated_minutes": 45,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "034bd31c-2905-4d27-b3d4-1fea442561ce",
+      "date": "2026-12-06",
+      "title": "Weekly test",
+      "task_type": "Study",
+      "start_time": "07:30",
+      "end_time": "09:00",
+      "estimated_minutes": 90,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "6b50f58a-a9b6-487c-a520-57ceea68cf71",
+      "date": "2026-12-06",
+      "title": "Test corrections",
+      "task_type": "Study",
+      "start_time": "09:30",
+      "end_time": "11:00",
+      "estimated_minutes": 90,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "5aba5fb4-82b5-42f8-8e71-86374a10586e",
+      "date": "2026-12-06",
+      "title": "Chemistry / revision",
+      "task_type": "Study",
+      "subject_id": "sub-chemistry",
+      "start_time": "11:30",
+      "end_time": "13:00",
+      "estimated_minutes": 90,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "3eb241f7-d533-4a44-b304-24425657a89d",
+      "date": "2026-12-06",
+      "title": "Computer Science practice",
+      "task_type": "Study",
+      "subject_id": "sub-computer-science",
+      "start_time": "14:30",
+      "end_time": "15:30",
+      "estimated_minutes": 60,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "19457e0a-8896-4325-876f-275c1cd19a99",
+      "date": "2026-12-06",
+      "title": "English / Hindi",
+      "task_type": "Study",
+      "start_time": "16:00",
+      "end_time": "16:50",
+      "estimated_minutes": 50,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "c0ea3180-ebf6-48e3-a021-fc17e4f6cd6b",
+      "date": "2026-12-06",
+      "title": "Weekly review and planning",
+      "task_type": "Study",
+      "start_time": "19:00",
+      "end_time": "19:45",
+      "estimated_minutes": 45,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "be956ee7-f34e-4754-8ff7-26cb5a249723",
+      "date": "2026-12-07",
+      "title": "Mathematics / Physics study",
+      "task_type": "Study",
+      "start_time": "05:15",
+      "end_time": "06:15",
+      "estimated_minutes": 60,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "38f15699-6464-4881-824a-73ce06f93a7c",
+      "date": "2026-12-07",
+      "title": "Main subject: Physics / Chemistry",
+      "task_type": "Study",
+      "start_time": "19:00",
+      "end_time": "20:15",
+      "estimated_minutes": 75,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "1ec08560-7c05-414b-a1bb-8f765a709b6c",
+      "date": "2026-12-07",
+      "title": "Computer Science",
+      "task_type": "Study",
+      "subject_id": "sub-computer-science",
+      "start_time": "20:25",
+      "end_time": "21:10",
+      "estimated_minutes": 45,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "7e23e790-19b6-4aa6-ae50-55416b6b8e25",
+      "date": "2026-12-07",
+      "title": "English / Hindi / revision",
+      "task_type": "Study",
+      "start_time": "21:40",
+      "end_time": "22:30",
+      "estimated_minutes": 50,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "fbb0e27a-19a3-4fe5-abb7-6e94d924ad03",
+      "date": "2026-12-08",
+      "title": "Mathematics / Physics study",
+      "task_type": "Study",
+      "start_time": "05:15",
+      "end_time": "06:15",
+      "estimated_minutes": 60,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "8e285000-a18f-4631-93bd-8333ad96a23a",
+      "date": "2026-12-08",
+      "title": "Main subject: Physics / Chemistry",
+      "task_type": "Study",
+      "start_time": "19:00",
+      "end_time": "20:15",
+      "estimated_minutes": 75,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "c3aec8b2-b050-425a-8918-c1202176ff3e",
+      "date": "2026-12-08",
+      "title": "Computer Science",
+      "task_type": "Study",
+      "subject_id": "sub-computer-science",
+      "start_time": "20:25",
+      "end_time": "21:10",
+      "estimated_minutes": 45,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "3355a3e8-34c7-4c49-81dd-a59d947a7301",
+      "date": "2026-12-08",
+      "title": "English / Hindi / revision",
+      "task_type": "Study",
+      "start_time": "21:40",
+      "end_time": "22:30",
+      "estimated_minutes": 50,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "2aae89ea-a3eb-40e5-824f-72249981448c",
+      "date": "2026-12-09",
+      "title": "Mathematics / Physics study",
+      "task_type": "Study",
+      "start_time": "05:15",
+      "end_time": "06:15",
+      "estimated_minutes": 60,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "e94c5c9b-e17a-43e1-8e94-f74c1ab8d1e8",
+      "date": "2026-12-09",
+      "title": "Main subject: Physics / Chemistry",
+      "task_type": "Study",
+      "start_time": "19:00",
+      "end_time": "20:15",
+      "estimated_minutes": 75,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "c52d9887-69e6-4922-9b76-f6231dccd2fa",
+      "date": "2026-12-09",
+      "title": "Computer Science",
+      "task_type": "Study",
+      "subject_id": "sub-computer-science",
+      "start_time": "20:25",
+      "end_time": "21:10",
+      "estimated_minutes": 45,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "9354115d-14ac-4588-bde6-2980b575a172",
+      "date": "2026-12-09",
+      "title": "English / Hindi / revision",
+      "task_type": "Study",
+      "start_time": "21:40",
+      "end_time": "22:30",
+      "estimated_minutes": 50,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "5df29fab-4d6d-47cf-b7f4-521c7cd8b975",
+      "date": "2026-12-10",
+      "title": "Mathematics / Physics study",
+      "task_type": "Study",
+      "start_time": "05:15",
+      "end_time": "06:15",
+      "estimated_minutes": 60,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "26f2249e-31a0-480e-bf6d-e77b3c1f077e",
+      "date": "2026-12-10",
+      "title": "Main subject: Physics / Chemistry",
+      "task_type": "Study",
+      "start_time": "19:00",
+      "end_time": "20:15",
+      "estimated_minutes": 75,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "3ca7fa12-26ff-4112-8653-00a8d2365dda",
+      "date": "2026-12-10",
+      "title": "Computer Science",
+      "task_type": "Study",
+      "subject_id": "sub-computer-science",
+      "start_time": "20:25",
+      "end_time": "21:10",
+      "estimated_minutes": 45,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "d3dcd6dc-784a-49b4-82c7-9046d17c2a6b",
+      "date": "2026-12-10",
+      "title": "English / Hindi / revision",
+      "task_type": "Study",
+      "start_time": "21:40",
+      "end_time": "22:30",
+      "estimated_minutes": 50,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "d65bff83-a422-4526-a3bc-fe340a2eb429",
+      "date": "2026-12-11",
+      "title": "Mathematics / Physics study",
+      "task_type": "Study",
+      "start_time": "05:15",
+      "end_time": "06:15",
+      "estimated_minutes": 60,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "0029dbf8-11f9-44f0-8256-5340762ff69a",
+      "date": "2026-12-11",
+      "title": "Main subject: Physics / Chemistry",
+      "task_type": "Study",
+      "start_time": "19:00",
+      "end_time": "20:15",
+      "estimated_minutes": 75,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "4f7d60ad-ddc2-4ac6-8978-9310b4c63c29",
+      "date": "2026-12-11",
+      "title": "Computer Science",
+      "task_type": "Study",
+      "subject_id": "sub-computer-science",
+      "start_time": "20:25",
+      "end_time": "21:10",
+      "estimated_minutes": 45,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "8601c157-4bb9-4256-9f41-2c4db97973c4",
+      "date": "2026-12-11",
+      "title": "English / Hindi / revision",
+      "task_type": "Study",
+      "start_time": "21:40",
+      "end_time": "22:30",
+      "estimated_minutes": 50,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "83f9b081-f3ef-4f82-9315-a8144b259300",
+      "date": "2026-12-12",
+      "title": "Mathematics",
+      "task_type": "Study",
+      "subject_id": "sub-mathematics",
+      "start_time": "07:30",
+      "end_time": "09:00",
+      "estimated_minutes": 90,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "eaa710ee-30e6-4c3e-9988-533b2a2f96a3",
+      "date": "2026-12-12",
+      "title": "Physics / Chemistry",
+      "task_type": "Study",
+      "start_time": "09:30",
+      "end_time": "11:00",
+      "estimated_minutes": 90,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "bd3dc9f6-8edf-4f1a-b17f-9e9b65731bb7",
+      "date": "2026-12-12",
+      "title": "Physics / Chemistry",
+      "task_type": "Study",
+      "start_time": "11:30",
+      "end_time": "13:00",
+      "estimated_minutes": 90,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "bfc5eebf-ecbe-447d-9bb6-bff4359143e3",
+      "date": "2026-12-12",
+      "title": "Computer Science",
+      "task_type": "Study",
+      "subject_id": "sub-computer-science",
+      "start_time": "14:30",
+      "end_time": "15:30",
+      "estimated_minutes": 60,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "49b23393-f47c-4cab-ac9b-51f5f29c8014",
+      "date": "2026-12-12",
+      "title": "English / Hindi",
+      "task_type": "Study",
+      "start_time": "16:00",
+      "end_time": "16:50",
+      "estimated_minutes": 50,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "27a8cc45-9c29-442f-a2f2-4e8cbe4a4984",
+      "date": "2026-12-12",
+      "title": "Backlog",
+      "task_type": "Study",
+      "start_time": "19:00",
+      "end_time": "19:45",
+      "estimated_minutes": 45,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "c87d4bb9-3d20-4c2b-82f6-e65a4d8f6016",
+      "date": "2026-12-13",
+      "title": "Weekly test",
+      "task_type": "Study",
+      "start_time": "07:30",
+      "end_time": "09:00",
+      "estimated_minutes": 90,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "a2e63943-e615-4764-b454-929bcf2a3175",
+      "date": "2026-12-13",
+      "title": "Test corrections",
+      "task_type": "Study",
+      "start_time": "09:30",
+      "end_time": "11:00",
+      "estimated_minutes": 90,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "8080fc8a-380d-4a18-a7c6-acb53d9dd256",
+      "date": "2026-12-13",
+      "title": "Chemistry / revision",
+      "task_type": "Study",
+      "subject_id": "sub-chemistry",
+      "start_time": "11:30",
+      "end_time": "13:00",
+      "estimated_minutes": 90,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "39c2e8c9-c9e4-4f0b-9a92-981603141f0b",
+      "date": "2026-12-13",
+      "title": "Computer Science practice",
+      "task_type": "Study",
+      "subject_id": "sub-computer-science",
+      "start_time": "14:30",
+      "end_time": "15:30",
+      "estimated_minutes": 60,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "bec59f9f-5c17-4b26-a172-d8c3f7279877",
+      "date": "2026-12-13",
+      "title": "English / Hindi",
+      "task_type": "Study",
+      "start_time": "16:00",
+      "end_time": "16:50",
+      "estimated_minutes": 50,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "e4e546d6-3e65-4c3c-bb9c-59ee5469374c",
+      "date": "2026-12-13",
+      "title": "Weekly review and planning",
+      "task_type": "Study",
+      "start_time": "19:00",
+      "end_time": "19:45",
+      "estimated_minutes": 45,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "5a4e2d0d-bd49-4698-b292-45b705c49bd9",
+      "date": "2026-12-14",
+      "title": "Mathematics / Physics study",
+      "task_type": "Study",
+      "start_time": "05:15",
+      "end_time": "06:15",
+      "estimated_minutes": 60,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "22c03a92-30c7-489b-96ff-3998485faf0e",
+      "date": "2026-12-14",
+      "title": "Main subject: Physics / Chemistry",
+      "task_type": "Study",
+      "start_time": "19:00",
+      "end_time": "20:15",
+      "estimated_minutes": 75,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "bae15c4f-e535-47df-83ff-908ae4587a41",
+      "date": "2026-12-14",
+      "title": "Computer Science",
+      "task_type": "Study",
+      "subject_id": "sub-computer-science",
+      "start_time": "20:25",
+      "end_time": "21:10",
+      "estimated_minutes": 45,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "08b9b262-6e38-40cd-a5fc-e121735bbffc",
+      "date": "2026-12-14",
+      "title": "English / Hindi / revision",
+      "task_type": "Study",
+      "start_time": "21:40",
+      "end_time": "22:30",
+      "estimated_minutes": 50,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "4a886cc8-f376-400c-b084-4a81755f82d3",
+      "date": "2026-12-15",
+      "title": "Mathematics / Physics study",
+      "task_type": "Study",
+      "start_time": "05:15",
+      "end_time": "06:15",
+      "estimated_minutes": 60,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "eafa59ed-60b5-4115-ab29-072a3c859ea9",
+      "date": "2026-12-15",
+      "title": "Main subject: Physics / Chemistry",
+      "task_type": "Study",
+      "start_time": "19:00",
+      "end_time": "20:15",
+      "estimated_minutes": 75,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "92726763-377f-460f-b64d-50f29d3c3135",
+      "date": "2026-12-15",
+      "title": "Computer Science",
+      "task_type": "Study",
+      "subject_id": "sub-computer-science",
+      "start_time": "20:25",
+      "end_time": "21:10",
+      "estimated_minutes": 45,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "ffbfcd29-412e-4d89-a45e-d9f20c4d1adf",
+      "date": "2026-12-15",
+      "title": "English / Hindi / revision",
+      "task_type": "Study",
+      "start_time": "21:40",
+      "end_time": "22:30",
+      "estimated_minutes": 50,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "0611ab9a-94f9-4479-9a6c-69f7b9d00f0b",
+      "date": "2026-12-16",
+      "title": "Mathematics / Physics study",
+      "task_type": "Study",
+      "start_time": "05:15",
+      "end_time": "06:15",
+      "estimated_minutes": 60,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "e38c517b-7fd1-4c7a-a0e0-5fd35b4c173e",
+      "date": "2026-12-16",
+      "title": "Main subject: Physics / Chemistry",
+      "task_type": "Study",
+      "start_time": "19:00",
+      "end_time": "20:15",
+      "estimated_minutes": 75,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "7cd9aa07-c346-4f43-a23c-4a549f42c090",
+      "date": "2026-12-16",
+      "title": "Computer Science",
+      "task_type": "Study",
+      "subject_id": "sub-computer-science",
+      "start_time": "20:25",
+      "end_time": "21:10",
+      "estimated_minutes": 45,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "28c0d115-b4c1-483a-b8ef-a68b03b781fe",
+      "date": "2026-12-16",
+      "title": "English / Hindi / revision",
+      "task_type": "Study",
+      "start_time": "21:40",
+      "end_time": "22:30",
+      "estimated_minutes": 50,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "2a75ee04-a3e0-450e-84ce-4ba250cfc768",
+      "date": "2026-12-17",
+      "title": "Mathematics / Physics study",
+      "task_type": "Study",
+      "start_time": "05:15",
+      "end_time": "06:15",
+      "estimated_minutes": 60,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "6a579a5e-f51e-45c1-9a54-21aa41a3bbdf",
+      "date": "2026-12-17",
+      "title": "Main subject: Physics / Chemistry",
+      "task_type": "Study",
+      "start_time": "19:00",
+      "end_time": "20:15",
+      "estimated_minutes": 75,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "7e891f13-1418-4864-9739-181999749c94",
+      "date": "2026-12-17",
+      "title": "Computer Science",
+      "task_type": "Study",
+      "subject_id": "sub-computer-science",
+      "start_time": "20:25",
+      "end_time": "21:10",
+      "estimated_minutes": 45,
+      "priority": 2,
+      "status": "Planned"
+    },
+    {
+      "id": "25d466ea-039c-414e-8932-7d3307b32850",
+      "date": "2026-12-17",
+      "title": "English / Hindi / revision",
+      "task_type": "Study",
+      "start_time": "21:40",
+      "end_time": "22:30",
+      "estimated_minutes": 50,
+      "priority": 2,
+      "status": "Planned"
+    }
+  ],
+  "revision_policy": {
+    "interval_days": [
+      1,
+      3,
+      7
+    ],
+    "adapt_to_results": true
+  }
+}

@@ -1,0 +1,175 @@
+// Analytics: everything here is derived from stored sessions, tasks and sleep.
+
+import { Palette, Metrics } from "../theme.slint";
+import {
+    AppButton, Card, Divider, Pill, ProgressBar, SectionTitle, EmptyState, StatTile
+} from "../components.slint";
+import { AnalyticsData } from "../state.slint";
+import { ScrollView } from "std-widgets.slint";
+
+export component AnalyticsPage inherits Rectangle {
+    background: transparent;
+
+    ScrollView {
+        width: parent.width;
+        height: parent.height;
+        content-width: self.width;
+
+        VerticalLayout {
+            padding: Metrics.page-pad;
+            spacing: 14px;
+
+            HorizontalLayout {
+                spacing: 8px;
+                SectionTitle {
+                    title: "Analytics";
+                    subtitle: "Sessions are the source of truth. Sleep and breaks are excluded from focus totals.";
+                    horizontal-stretch: 1; }
+                for name[i] in AnalyticsData.range-names: AppButton {
+                    text: name;
+                    kind: AnalyticsData.range == i ? 0 : 1;
+                    button-width: 68px;
+                    button-height: 30px;
+                    clicked => { AnalyticsData.set-range(i); }
+                }
+            }
+
+            HorizontalLayout {
+                spacing: 12px;
+                StatTile { label: "FOCUSED"; value: AnalyticsData.focused-text; sub: "of " + AnalyticsData.planned-text + " planned"; tone: 1; }
+                StatTile { label: "TASKS DONE"; value: AnalyticsData.tasks-done + " / " + AnalyticsData.tasks-total; sub: AnalyticsData.completion-pct + "% completion"; tone: 0; }
+                StatTile { label: "AVERAGE SESSION"; value: AnalyticsData.avg-session + "m"; sub: AnalyticsData.session-count + " sessions"; tone: 0; }
+                StatTile { label: "EXAM READY"; value: AnalyticsData.chapters-ready + " / " + AnalyticsData.chapters-total; sub: "chapters"; tone: 2; }
+                StatTile { label: "RECALL"; value: AnalyticsData.recall-pct + "%"; sub: AnalyticsData.recall-good + " of " + AnalyticsData.recall-total + " graded reviews"; tone: AnalyticsData.recall-pct >= 70 ? 2 : 3; }
+                StatTile { label: "SLEEP"; value: AnalyticsData.sleep-avg + "h"; sub: "7-day average · accuracy " + AnalyticsData.accuracy; tone: 0; }
+            }
+
+            Card {
+                VerticalLayout {
+                    padding: 16px;
+                    spacing: 8px;
+                    HorizontalLayout {
+                        SectionTitle { title: "Focus by day"; subtitle: "Bars show recorded focus; faint track shows planned minutes"; horizontal-stretch: 1; }
+                        if AnalyticsData.backlog-count > 0: Pill { text: AnalyticsData.backlog-count + " backlog"; tone: 3; }
+                    }
+                    Divider { }
+                    if AnalyticsData.daily.length == 0: EmptyState { title: "No days in range"; body: "Choose another range or start a focus session."; }
+                    Rectangle {
+                        height: 170px;
+                        clip: true;
+                        HorizontalLayout {
+                            spacing: AnalyticsData.daily.length > 14 ? 2px : 6px;
+                            padding-left: 4px;
+                            padding-right: 4px;
+                            for point[i] in AnalyticsData.daily: VerticalLayout {
+                                horizontal-stretch: 1;
+                                alignment: end;
+                                spacing: 2px;
+                                Rectangle {
+                                    width: 100%;
+                                    height: max(2px, point.height * 1.25px);
+                                    border-radius: 2px;
+                                    background: point.is-today ? Palette.accent : Palette.accent.transparentize(0.35);
+                                }
+                                Rectangle {
+                                    width: 100%;
+                                    height: max(1px, (point.planned-height - point.height) * 1.25px);
+                                    border-radius: 2px;
+                                    background: #ffffff10;
+                                }
+                                if AnalyticsData.daily.length <= 14: Text {
+                                    text: point.weekday;
+                                    color: point.is-today ? Palette.text : Palette.muted;
+                                    font-size: 8px;
+                                    horizontal-alignment: center;
+                                }
+                            }
+                        }
+                    }
+                    HorizontalLayout {
+                        Text { text: AnalyticsData.daily.length + " days"; color: Palette.muted; font-size: 9px; horizontal-stretch: 1; }
+                        Text { text: "today"; color: Palette.accent; font-size: 9px; }
+                    }
+                }
+            }
+
+            HorizontalLayout {
+                spacing: 14px;
+                Card {
+                    horizontal-stretch: 1;
+                    VerticalLayout {
+                        padding: 16px;
+                        spacing: 7px;
+                        SectionTitle { title: "Subject split"; subtitle: "Focused minutes in range"; }
+                        Divider { }
+                        if AnalyticsData.subjects.length == 0: Text { text: "No focus sessions recorded in this range."; color: Palette.muted; font-size: 11px; }
+                        for s[i] in AnalyticsData.subjects: VerticalLayout {
+                            spacing: 3px;
+                            HorizontalLayout {
+                                Rectangle { width: 6px; height: 6px; border-radius: 3px; background: s.tint; }
+                                Text { text: s.name; color: Palette.text; font-size: 10.5px; horizontal-stretch: 1; vertical-alignment: center; }
+                                Text { text: s.text; color: Palette.muted; font-size: 9.5px; vertical-alignment: center; }
+                            }
+                            ProgressBar { value: s.percent; bar-color: s.tint; bar-height: 5px; }
+                        }
+                    }
+                }
+                Card {
+                    horizontal-stretch: 1;
+                    VerticalLayout {
+                        padding: 16px;
+                        spacing: 7px;
+                        SectionTitle { title: "Task outcomes"; subtitle: "All tasks in this range"; }
+                        Divider { }
+                        for st[i] in AnalyticsData.statuses: HorizontalLayout {
+                            height: 25px;
+                            spacing: 8px;
+                            Text { text: st.label; color: Palette.muted; font-size: 10.5px; width: 96px; vertical-alignment: center; }
+                            ProgressBar {
+                                value: st.percent;
+                                bar-color: st.tone == "success" ? Palette.success : st.tone == "danger" ? Palette.danger : st.tone == "warning" ? Palette.warning : Palette.accent;
+                                horizontal-stretch: 1;
+                            }
+                            Text { text: st.count; color: Palette.text; font-size: 10px; width: 28px; horizontal-alignment: right; vertical-alignment: center; }
+                        }
+                    }
+                }
+            }
+
+            Card {
+                VerticalLayout {
+                    padding: 16px;
+                    spacing: 8px;
+                    SectionTitle { title: "Consistency"; subtitle: "Twelve weeks of study activity; darker cells mean more focused time"; }
+                    Divider { }
+                    HorizontalLayout {
+                        spacing: 2px;
+                        for cell[i] in AnalyticsData.heatmap: Rectangle {
+                            width: 13px; height: 13px;
+                            border-radius: 3px;
+                            background: cell.blank ? transparent : cell.level <= 0 ? #ffffff08 : cell.level == 1 ? Palette.accent.transparentize(0.75) : cell.level == 2 ? Palette.accent.transparentize(0.5) : cell.level == 3 ? Palette.accent.transparentize(0.2) : Palette.accent;
+                        }
+                    }
+                }
+            }
+
+            Card {
+                VerticalLayout {
+                    padding: 16px;
+                    spacing: 6px;
+                    SectionTitle { title: "Mock performance"; subtitle: "Every logged paper, newest first"; }
+                    Divider { }
+                    if AnalyticsData.mocks.length == 0: Text { text: "No mock tests logged yet."; color: Palette.muted; font-size: 11px; }
+                    for mock[i] in AnalyticsData.mocks: HorizontalLayout {
+                        height: 34px;
+                        spacing: 8px;
+                        Text { text: mock.name; color: Palette.text; font-size: 11px; horizontal-stretch: 1; vertical-alignment: center; overflow: elide; }
+                        Text { text: mock.subject; color: Palette.muted; font-size: 9.5px; width: 100px; vertical-alignment: center; }
+                        Text { text: mock.date; color: Palette.muted; font-size: 9.5px; width: 82px; vertical-alignment: center; }
+                        Pill { text: mock.score + " · " + mock.percent + "%"; tone: mock.percent >= 75 ? 2 : mock.percent >= 50 ? 3 : 4; }
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,146 @@
+// Focus: a monotonic timer that survives crashes and never counts pauses.
+
+import { Palette, Metrics } from "../theme.slint";
+import {
+    AppButton, Card, Divider, Pill, ProgressBar, SectionTitle, EmptyState,
+    Field, LabeledCombo, Modal
+} from "../components.slint";
+import { FocusData } from "../state.slint";
+import { ScrollView } from "std-widgets.slint";
+
+export component FocusPage inherits Rectangle {
+    background: transparent;
+
+    ScrollView {
+        width: parent.width;
+        height: parent.height;
+        content-width: self.width;
+
+        VerticalLayout {
+            padding: Metrics.page-pad;
+            spacing: 14px;
+
+            if FocusData.recovery-open: Rectangle {
+                height: 56px;
+                border-radius: Metrics.radius-sm;
+                background: Palette.warning-soft;
+                border-width: 1px;
+                border-color: Palette.warning.transparentize(0.5);
+                HorizontalLayout {
+                    padding-left: 16px; padding-right: 10px;
+                    spacing: 10px;
+                    Text {
+                        text: FocusData.recovery-text;
+                        color: Palette.warning; font-size: 11.5px; vertical-alignment: center; horizontal-stretch: 1;
+                    }
+                    AppButton { text: "Resume recovered"; kind: 1; button-width: 118px; button-height: 30px; clicked => { FocusData.resume-recovered(); } }
+                    AppButton { text: "Discard"; kind: 2; button-width: 66px; button-height: 30px; clicked => { FocusData.discard-recovered(); } }
+                }
+            }
+
+            HorizontalLayout {
+                spacing: 14px;
+
+                Card {
+                    horizontal-stretch: 2;
+                    VerticalLayout {
+                        padding: 22px;
+                        spacing: 12px;
+                        HorizontalLayout {
+                            spacing: 6px;
+                            Pill { text: FocusData.phase-label; tone: FocusData.is-break ? 2 : 1; }
+                            Pill { text: FocusData.state-label; tone: 0; }
+                            Rectangle { horizontal-stretch: 1; }
+                            Pill { text: FocusData.focused-today + " focus today"; tone: 5; }
+                        }
+                        Text {
+                            text: FocusData.display;
+                            color: Palette.text;
+                            font-size: 78px;
+                            font-weight: 750;
+                            font-family: Palette.mono;
+                            horizontal-alignment: center;
+                        }
+                        ProgressBar { value: FocusData.progress; bar-height: 8px; bar-color: FocusData.is-break ? Palette.success : Palette.accent; }
+                        Text {
+                            text: FocusData.linked-task != "" ? "Linked task · " + FocusData.linked-task : FocusData.linked-chapter != "" ? "Linked chapter" : "No task linked · free focus";
+                            color: Palette.muted; font-size: 11px; horizontal-alignment: center;
+                        }
+                        HorizontalLayout {
+                            spacing: 8px;
+                            alignment: center;
+                            if !FocusData.active: AppButton { text: "Start focus"; kind: 0; button-width: 120px; button-height: 40px; clicked => { FocusData.start(); } }
+                            if FocusData.running: AppButton { text: "Pause"; kind: 1; button-width: 96px; button-height: 40px; clicked => { FocusData.pause(); } }
+                            if FocusData.paused: AppButton { text: "Resume"; kind: 0; button-width: 96px; button-height: 40px; clicked => { FocusData.resume(); } }
+                            if FocusData.active && !FocusData.is-break: AppButton { text: "Take break"; kind: 1; button-width: 92px; button-height: 40px; clicked => { FocusData.take-break(); } }
+                            if FocusData.is-break: AppButton { text: "End break"; kind: 4; button-width: 92px; button-height: 40px; clicked => { FocusData.end-break(); } }
+                            if FocusData.active: AppButton { text: "Finish session"; kind: 4; button-width: 116px; button-height: 40px; clicked => { FocusData.finish(); } }
+                            if FocusData.active: AppButton { text: "Interrupt"; kind: 2; button-width: 80px; button-height: 40px; clicked => { FocusData.interrupt(); } }
+                            if FocusData.active: AppButton { text: "Discard"; kind: 3; button-width: 72px; button-height: 40px; clicked => { FocusData.discard(); } }
+                        }
+                        if FocusData.error != "": Text { text: FocusData.error; color: Palette.danger; font-size: 11px; horizontal-alignment: center; wrap: word-wrap; }
+                        Divider { }
+                        Text {
+                            text: "Elapsed time is derived from a monotonic clock plus a saved checkpoint. Paused and break time never count as study; a crash recovers the last checkpoint.";
+                            color: Palette.muted; font-size: 10px; wrap: word-wrap; horizontal-alignment: center;
+                        }
+                    }
+                }
+
+                VerticalLayout {
+                    min-width: 330px;
+                    max-width: 330px;
+                    spacing: 12px;
+                    Card {
+                        VerticalLayout {
+                            padding: 16px;
+                            spacing: 10px;
+                            SectionTitle { title: "Session setup"; subtitle: "Applied when you start or resume after reset"; }
+                            LabeledCombo {
+                                label: "Preset";
+                                model: FocusData.preset-names;
+                                current-index: FocusData.preset;
+                                selected(index) => { FocusData.set-preset(index); }
+                            }
+                            if FocusData.preset == 3: HorizontalLayout {
+                                spacing: 8px;
+                                Field { label: "Focus min"; text <=> FocusData.custom-focus; horizontal-stretch: 1; }
+                                Field { label: "Break min"; text <=> FocusData.custom-break; horizontal-stretch: 1; }
+                                AppButton { text: "Set"; kind: 1; button-width: 46px; button-height: 34px; clicked => { FocusData.apply-custom(FocusData.custom-focus, FocusData.custom-break); } }
+                            }
+                            LabeledCombo {
+                                label: "Subject"; model: FocusData.subject-names;
+                                current-index: FocusData.subject-index;
+                                selected(index) => { FocusData.set-subject(index); }
+                            }
+                            LabeledCombo {
+                                label: "Chapter"; model: FocusData.chapter-names;
+                                current-index: FocusData.chapter-index;
+                                selected(index) => { FocusData.set-chapter(index); }
+                            }
+                            AppButton { text: "Pick a timetable block"; kind: 2; stretch: true; button-height: 30px; clicked => { FocusData.open-timetable(); } }
+                        }
+                    }
+                    Card {
+                        VerticalLayout {
+                            padding: 16px;
+                            spacing: 6px;
+                            SectionTitle { title: "Today"; subtitle: FocusData.session-count + " sessions · " + FocusData.today-focus-total + " focused"; }
+                            Divider { }
+                            if FocusData.sessions.length == 0: Text {
+                                text: "No sessions yet today. A finished session appears here with its real focused time.";
+                                color: Palette.muted; font-size: 10.5px; wrap: word-wrap;
+                            }
+                            for s[i] in FocusData.sessions: VerticalLayout {
+                                spacing: 1px;
+                                height: 40px;
+                                Text { text: s.chapter == "" ? s.subject : s.chapter; color: Palette.text; font-size: 11px; overflow: elide; }
+                                Text { text: s.start + " · " + s.focused + " focused · " + s.status; color: Palette.muted; font-size: 9.5px; }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

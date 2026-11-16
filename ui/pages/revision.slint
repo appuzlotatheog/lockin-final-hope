@@ -1,0 +1,137 @@
+// Revision queue: 1/3/7-day policy, adaptive grading, history preserved.
+
+import { Palette, Metrics } from "../theme.slint";
+import {
+    AppButton, Card, Divider, Pill, SectionTitle, EmptyState, Field, Modal
+} from "../components.slint";
+import { RevisionData, Shell } from "../state.slint";
+import { ScrollView } from "std-widgets.slint";
+
+component StatPill inherits Rectangle {
+    in property <string> label;
+    in property <int> value;
+    in property <int> tone: 0;
+    height: 38px;
+    width: value-text.preferred-width + label-text.preferred-width + 34px;
+    border-radius: 9px;
+    background: Palette.elevated;
+    border-width: 1px;
+    border-color: tone == 4 ? Palette.danger.transparentize(0.6) : tone == 2 ? Palette.success.transparentize(0.6) : Palette.border;
+    value-text := Text {
+        x: 10px; y: 0; height: parent.height;
+        text: root.value;
+        color: tone == 4 ? Palette.danger : tone == 2 ? Palette.success : tone == 1 ? Palette.accent : Palette.text;
+        font-size: 15px; font-weight: 700; vertical-alignment: center;
+    }
+    label-text := Text {
+        x: value-text.preferred-width + 14px; y: 0; height: parent.height;
+        text: root.label; color: Palette.muted; font-size: 9px; vertical-alignment: center;
+    }
+}
+
+export component RevisionPage inherits Rectangle {
+    background: transparent;
+
+    VerticalLayout {
+        padding: Metrics.page-pad;
+        spacing: 12px;
+
+        HorizontalLayout {
+            spacing: 10px;
+            SectionTitle {
+                title: "Revision queue";
+                subtitle: "Grade honestly — Easy grows the interval, Failed brings it back sooner. Nothing is deleted.";
+                horizontal-stretch: 1; }
+            StatPill { label: "due"; value: RevisionData.due-count; tone: 1; }
+            StatPill { label: "overdue"; value: RevisionData.overdue-count; tone: 4; }
+            StatPill { label: "upcoming"; value: RevisionData.upcoming-count; tone: 0; }
+            StatPill { label: "done"; value: RevisionData.completed-count; tone: 2; }
+        }
+
+        HorizontalLayout {
+            spacing: 5px;
+            for name[i] in RevisionData.tab-names: AppButton {
+                text: name;
+                kind: RevisionData.tab == i ? 0 : 1;
+                button-width: i == 0 ? 88px : 82px;
+                button-height: 30px;
+                clicked => { RevisionData.set-tab(i); }
+            }
+            Rectangle { horizontal-stretch: 1; }
+            AppButton { text: "Open focus"; kind: 2; button-width: 78px; button-height: 30px; clicked => { Shell.quick-focus(); } }
+        }
+
+        Card {
+            vertical-stretch: 1;
+            VerticalLayout {
+                padding: 14px;
+                spacing: 4px;
+                if RevisionData.rows.length == 0: VerticalLayout {
+                    padding-top: 40px; padding-bottom: 40px;
+                    EmptyState {
+                        title: "Nothing in this view";
+                        body: "Complete a chapter and generate revisions, or complete work in this plan to build the queue.";
+                    }
+                }
+                for rev[i] in RevisionData.rows: Rectangle {
+                    height: rev.state == "completed" ? 52px : 62px;
+                    border-radius: Metrics.radius-sm;
+                    background: row-touch.has-hover ? #ffffff06 : transparent;
+                    row-touch := TouchArea { clicked => { if (RevisionData.tab != 3) { RevisionData.start-revision(rev.chapter-id); } } mouse-cursor: pointer; }
+                    Rectangle { x: 0; y: 10px; width: 3px; height: parent.height - 20px; border-radius: 2px; background: rev.overdue ? Palette.danger : Palette.accent; }
+                    VerticalLayout {
+                        x: 12px; y: 0; width: parent.width - 330px; height: parent.height;
+                        spacing: 1px; alignment: center;
+                        Text { text: rev.title; color: Palette.text; font-size: 12.5px; font-weight: 600; overflow: elide; }
+                        Text { text: rev.subject + " · " + rev.interval-text + (rev.ease-text != "" ? " · " + rev.ease-text : ""); color: Palette.muted; font-size: 9.5px; }
+                    }
+                    Text {
+                        x: parent.width - 318px; y: 0; width: 80px; height: parent.height;
+                        text: rev.due; color: rev.overdue ? Palette.danger : Palette.muted; font-size: 10px;
+                        horizontal-alignment: right; vertical-alignment: center;
+                    }
+                    if RevisionData.tab != 3: HorizontalLayout {
+                        x: parent.width - 228px; y: 0; width: 224px; height: parent.height;
+                        spacing: 4px; alignment: end;
+                        AppButton { text: "Easy"; kind: 4; button-width: 44px; button-height: 26px; clicked => { RevisionData.grade(rev.id, 0); } }
+                        AppButton { text: "Good"; kind: 1; button-width: 44px; button-height: 26px; clicked => { RevisionData.grade(rev.id, 1); } }
+                        AppButton { text: "Hard"; kind: 3; button-width: 44px; button-height: 26px; clicked => { RevisionData.grade(rev.id, 2); } }
+                        AppButton { text: "Fail"; kind: 3; button-width: 40px; button-height: 26px; clicked => { RevisionData.grade(rev.id, 3); } }
+                        AppButton { text: "…"; kind: 2; button-width: 26px; button-height: 26px; clicked => { RevisionData.open-reschedule(rev.id); } }
+                    }
+                    if RevisionData.tab == 3: Text {
+                        x: parent.width - 228px; y: 0; width: 220px; height: parent.height;
+                        text: rev.result; color: Palette.success; font-size: 10.5px;
+                        horizontal-alignment: right; vertical-alignment: center;
+                    }
+                }
+            }
+        }
+    }
+
+    Modal {
+        open: RevisionData.reschedule-open;
+        title: "Reschedule review";
+        subtitle: "History is kept; only the due date changes.";
+        dialog-width: 460px;
+        dialog-height: 340px;
+        close => { RevisionData.close-reschedule(); }
+        VerticalLayout {
+            spacing: 10px;
+            Field { label: "New due date"; text <=> RevisionData.reschedule-date; placeholder: "2026-12-01"; hint: "YYYY-MM-DD · local plan timezone"; }
+            HorizontalLayout {
+                spacing: 8px;
+                Text { text: "Quick snooze"; color: Palette.muted; font-size: 11px; vertical-alignment: center; }
+                AppButton { text: "+1 day"; kind: 1; button-width: 64px; button-height: 28px; clicked => { RevisionData.snooze(RevisionData.reschedule-id, 1); } }
+                AppButton { text: "+3 days"; kind: 1; button-width: 64px; button-height: 28px; clicked => { RevisionData.snooze(RevisionData.reschedule-id, 3); } }
+                AppButton { text: "+7 days"; kind: 1; button-width: 64px; button-height: 28px; clicked => { RevisionData.snooze(RevisionData.reschedule-id, 7); } }
+            }
+            Rectangle { vertical-stretch: 1; }
+            HorizontalLayout {
+                spacing: 8px;
+                AppButton { text: "Cancel"; kind: 1; stretch: true; clicked => { RevisionData.close-reschedule(); } }
+                AppButton { text: "Save date"; kind: 0; stretch: true; clicked => { RevisionData.save-reschedule(RevisionData.reschedule-date); } }
+            }
+        }
+    }
+}
